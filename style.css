@@ -430,7 +430,8 @@ textarea {
         flex-direction: column;
         height: auto;
         max-height: none;
-        gap: 20px;
+        gap: 30px;
+        /* Increased gap between sections */
     }
 
     .app-container {
@@ -438,5 +439,35 @@ textarea {
         min-width: 0;
         height: auto;
         min-height: 500px;
+        overflow: visible;
+        /* Allow header sticky to work relative to viewport/body scroll if needed, though strictly sticky needs scroll container */
+    }
+
+    /* Sticky Header */
+    header {
+        position: sticky;
+        top: 0;
+        z-index: 100;
+        background: rgba(15, 23, 42, 0.95);
+        /* Dark background for visibility */
+        backdrop-filter: blur(10px);
+        border-radius: 24px 24px 0 0;
+        /* Match container top corners */
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        margin: -1px -1px 0 -1px;
+        /* Slight pull to cover borders */
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    /* Touch Optimization */
+    .actions {
+        gap: 30px;
+        /* Wider gap for buttons */
+    }
+
+    .btn-ox {
+        /* Ensure buttons are large enough */
+        min-height: 80px;
     }
 }
