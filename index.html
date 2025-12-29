@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TOEIC Dual Master</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&family=Noto+Sans+KR:wght@400;500;700&display=swap"
+        rel="stylesheet">
+</head>
+
+<body>
+    <div class="main-layout">
+
+        <!-- LEFT: Collocation Quiz -->
+        <div class="app-container" id="collo-app">
+            <header>
+                <div class="logo">Collocation Recall</div>
+                <div id="collo-progress-container" class="hidden progress-wrapper">
+                    <span id="collo-progress-text">1 / 20</span>
+                    <div class="progress-bar">
+                        <div id="collo-progress-fill"></div>
+                    </div>
+                </div>
+            </header>
+
+            <!-- Collo Start -->
+            <section id="collo-start-view" class="view active">
+                <div class="hero-card">
+                    <h1>Collocation<br>Master</h1>
+                    <p>토익 빈출 콜로케이션, 완벽하게 마스터하세요.</p>
+                    <div class="stats-preview">
+                        <div class="stat-item">
+                            <span class="label">Total DB</span>
+                            <span class="value" id="collo-total-items-count">0</span>
+                        </div>
+                    </div>
+                    <button id="collo-btn-start" class="btn-primary">학습 시작하기</button>
+                    <button id="collo-btn-review" class="btn-secondary hidden" style="margin-bottom: 10px;">틀린 문제 다시
+                        보기</button>
+                    <!-- Data Button removed for simplicity in dual view or kept locally -->
+                    <button id="collo-btn-data" class="btn-text">데이터 추가</button>
+                </div>
+            </section>
+
+            <!-- Collo Quiz -->
+            <section id="collo-quiz-view" class="view hidden">
+                <div class="card quiz-card">
+                    <div class="question-type">Collocation Check</div>
+                    <h2 id="collo-question-text">Question goes here...</h2>
+                    <div class="actions">
+                        <button class="btn-ox btn-o" data-action="answer" data-value="O">O</button>
+                        <button class="btn-ox btn-x" data-action="answer" data-value="X">X</button>
+                    </div>
+                    <button id="collo-btn-stop" class="btn-secondary small">그만 (Exit)</button>
+                </div>
+            </section>
+
+            <!-- Collo Report -->
+            <section id="collo-report-view" class="view hidden">
+                <div class="card report-card">
+                    <h2>Session Report</h2>
+                    <div class="score-circle">
+                        <svg viewBox="0 0 36 36" class="circular-chart blue">
+                            <path class="circle-bg"
+                                d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
+                            <path class="circle" id="collo-score-circle-path" stroke-dasharray="0, 100"
+                                d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
+                            <text x="18" y="20.35" class="percentage" id="collo-score-text">0%</text>
+                        </svg>
+                    </div>
+                    <div class="report-details">
+                        <p>정답: <span id="collo-correct-count" class="highlight-green">0</span> / 틀림: <span
+                                id="collo-wrong-count" class="highlight-red">0</span></p>
+                    </div>
+                    <div id="collo-wrong-answers-section" class="hidden wrong-section-scroll">
+                        <h3>Review List</h3>
+                        <ul id="collo-wrong-items-list"></ul>
+                    </div>
+                    <button id="collo-btn-restart" class="btn-primary">다시 시작하기</button>
+                </div>
+            </section>
+        </div>
+
+        <!-- RIGHT: Contextual Vocab Quiz -->
+        <div class="app-container" id="vocab-app">
+            <header>
+                <div class="logo">Contextual Vocab</div>
+                <div id="vocab-progress-container" class="hidden progress-wrapper">
+                    <span id="vocab-progress-text">1 / 20</span>
+                    <div class="progress-bar">
+                        <div id="vocab-progress-fill"></div>
+                    </div>
+                </div>
+            </header>
+
+            <!-- Vocab Start -->
+            <section id="vocab-start-view" class="view active">
+                <div class="hero-card">
+                    <h1>Vocab<br>Context</h1>
+                    <p>문맥 속에서 어휘의 뉘앙스를 파악하세요.</p>
+                    <div class="stats-preview">
+                        <div class="stat-item">
+                            <span class="label">Total DB</span>
+                            <span class="value" id="vocab-total-items-count">4</span>
+                        </div>
+                    </div>
+                    <button id="vocab-btn-start" class="btn-primary">학습 시작하기</button>
+                    <button id="vocab-btn-review" class="btn-secondary hidden">틀린 문제 다시 보기</button>
+                </div>
+            </section>
+
+            <!-- Vocab Quiz -->
+            <section id="vocab-quiz-view" class="view hidden">
+                <div class="card quiz-card">
+                    <div class="question-type">Meaning Check</div>
+                    <h2 id="vocab-question-text">Question goes here...</h2>
+                    <div class="actions">
+                        <button class="btn-ox btn-o" data-action="answer" data-value="O">O</button>
+                        <button class="btn-ox btn-x" data-action="answer" data-value="X">X</button>
+                    </div>
+                    <button id="vocab-btn-stop" class="btn-secondary small">그만 (Exit)</button>
+                </div>
+            </section>
+
+            <!-- Vocab Report -->
+            <section id="vocab-report-view" class="view hidden">
+                <div class="card report-card">
+                    <h2>Session Report</h2>
+                    <div class="score-circle">
+                        <svg viewBox="0 0 36 36" class="circular-chart blue">
+                            <path class="circle-bg"
+                                d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
+                            <path class="circle" id="vocab-score-circle-path" stroke-dasharray="0, 100"
+                                d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
+                            <text x="18" y="20.35" class="percentage" id="vocab-score-text">0%</text>
+                        </svg>
+                    </div>
+                    <div class="report-details">
+                        <p>정답: <span id="vocab-correct-count" class="highlight-green">0</span> / 틀림: <span
+                                id="vocab-wrong-count" class="highlight-red">0</span></p>
+                    </div>
+                    <div id="vocab-wrong-answers-section" class="hidden wrong-section-scroll">
+                        <h3>Review List</h3>
+                        <ul id="vocab-wrong-items-list"></ul>
+                    </div>
+                    <button id="vocab-btn-restart" class="btn-primary">다시 시작하기</button>
+                </div>
+            </section>
+        </div>
+
+        <!-- SHARED MODALS (Dynamically Controlled) -->
+        <!-- Feedback Modal: We will make this shared but content dynamic, or clone it? 
+             Actually, let's keep one shared modal to simplify DOM, but managing state might be tricky if both are active?
+             Wait, requirement says "Waiting logic... focus on one". 
+             But "independent progress". 
+             Let's put a unique modal inside EACH container to avoid Z-index conflicts or logic overlap.
+        -->
+
+        <!-- Collo Modal -->
+        <div id="collo-feedback-modal" class="modal hidden">
+            <div class="modal-content feedback-content">
+                <div id="collo-feedback-icon" class="icon">✅</div>
+                <h3 id="collo-feedback-title">Correct!</h3>
+                <p id="collo-feedback-reason">Explanation goes here.</p>
+                <button id="collo-btn-next" class="btn-primary">다음 문제</button>
+            </div>
+        </div>
+
+        <!-- Vocab Modal -->
+        <div id="vocab-feedback-modal" class="modal hidden">
+            <div class="modal-content feedback-content">
+                <div id="vocab-feedback-icon" class="icon">✅</div>
+                <h3 id="vocab-feedback-title">Correct!</h3>
+                <p id="vocab-feedback-reason">Explanation goes here.</p>
+                <button id="vocab-btn-next" class="btn-primary">다음 문제</button>
+            </div>
+        </div>
+
+        <!-- Data Modal (Only for Collo) -->
+        <div id="collo-data-modal" class="modal hidden">
+            <div class="modal-content">
+                <h3>데이터 추가</h3>
+                <textarea id="collo-data-input" placeholder="새로운 데이터를 이곳에 붙여넣으세요..."></textarea>
+                <div class="modal-actions">
+                    <button id="collo-btn-cancel-data" class="btn-secondary">취소</button>
+                    <button id="collo-btn-save-data" class="btn-primary">저장 및 병합</button>
+                </div>
+            </div>
+        </div>
+
+    </div>
+    <script src="script.js"></script>
+</body>
+
+</html>

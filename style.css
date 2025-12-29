@@ -1,0 +1,442 @@
+:root {
+    --bg-gradient: linear-gradient(135deg, #0f172a 0%, #1e1b4b 100%);
+    --card-bg: rgba(255, 255, 255, 0.05);
+    --card-border: 1px solid rgba(255, 255, 255, 0.1);
+    --text-main: #f8fafc;
+    --text-muted: #94a3b8;
+    --accent: #38bdf8;
+    --accent-hover: #0ea5e9;
+    --correct: #4ade80;
+    --wrong: #f87171;
+    --glass-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+    --font-heading: 'Inter', sans-serif;
+    --font-body: 'Noto Sans KR', sans-serif;
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    background: var(--bg-gradient);
+    color: var(--text-main);
+    font-family: var(--font-body);
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+    padding: 20px;
+    /* Gap from edges */
+}
+
+/* Dual Layout Wrapper */
+.main-layout {
+    display: flex;
+    flex-direction: row;
+    gap: 20px;
+    width: 100%;
+    max-width: 1000px;
+    /* Allow wider for two cards */
+    height: 100%;
+    max-height: 850px;
+    justify-content: center;
+    align-items: stretch;
+}
+
+.app-container {
+    flex: 1;
+    /* Remove fixed width/max-width since flex handles it */
+    min-width: 320px;
+    /* Minimum mobile width */
+    height: 100%;
+    background: rgba(15, 23, 42, 0.6);
+    backdrop-filter: blur(10px);
+    border: var(--card-border);
+    border-radius: 24px;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    /* For localized modals */
+    overflow: hidden;
+    box-shadow: var(--glass-shadow);
+}
+
+/* Header */
+header {
+    padding: 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.logo {
+    font-family: var(--font-heading);
+    font-weight: 800;
+    font-size: 1.2rem;
+    color: var(--accent);
+    letter-spacing: -0.5px;
+}
+
+/* Common Layout */
+.view {
+    flex: 1;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    transition: opacity 0.3s ease;
+}
+
+.hidden {
+    display: none !important;
+}
+
+.active {
+    display: flex !important;
+}
+
+/* Cards */
+.card,
+.hero-card {
+    background: var(--card-bg);
+    border: var(--card-border);
+    border-radius: 20px;
+    padding: 30px;
+    width: 100%;
+    text-align: center;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+}
+
+h1 {
+    font-family: var(--font-heading);
+    font-size: 2.5rem;
+    line-height: 1.1;
+    margin-bottom: 15px;
+    background: linear-gradient(to right, #fff, #94a3b8);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+p {
+    color: var(--text-muted);
+    margin-bottom: 30px;
+    line-height: 1.6;
+}
+
+/* Stats */
+.stats-preview {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 30px;
+}
+
+.stat-item {
+    background: rgba(255, 255, 255, 0.03);
+    padding: 10px 20px;
+    border-radius: 12px;
+}
+
+.stat-item .value {
+    font-weight: 700;
+    color: var(--accent);
+    margin-left: 5px;
+}
+
+/* Buttons */
+button {
+    cursor: pointer;
+    border: none;
+    font-family: var(--font-body);
+    transition: all 0.2s;
+}
+
+.btn-primary {
+    background: var(--accent);
+    color: #0f172a;
+    font-weight: 700;
+    padding: 16px 32px;
+    border-radius: 14px;
+    width: 100%;
+    font-size: 1.1rem;
+    margin-bottom: 15px;
+}
+
+.btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(56, 189, 248, 0.4);
+}
+
+.btn-primary:active {
+    transform: translateY(0);
+}
+
+.btn-secondary {
+    background: rgba(255, 255, 255, 0.1);
+    color: var(--text-main);
+    padding: 12px 24px;
+    border-radius: 12px;
+    width: 100%;
+    font-weight: 600;
+}
+
+.btn-secondary:hover {
+    background: rgba(255, 255, 255, 0.15);
+}
+
+.btn-secondary.small {
+    width: auto;
+    font-size: 0.9rem;
+    padding: 8px 16px;
+    margin-top: 20px;
+}
+
+.btn-text {
+    background: none;
+    color: var(--text-muted);
+    text-decoration: underline;
+    margin-top: 10px;
+    font-size: 0.9rem;
+}
+
+/* OX Buttons */
+.actions {
+    display: flex;
+    gap: 15px;
+    width: 100%;
+    margin: 30px 0;
+}
+
+.btn-ox {
+    flex: 1;
+    aspect-ratio: 1;
+    border-radius: 20px;
+    font-size: 3rem;
+    font-weight: 900;
+    font-family: var(--font-heading);
+    color: white;
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.3);
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.btn-ox:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    transform: none !important;
+    box-shadow: none;
+    filter: grayscale(0.5);
+}
+
+.btn-o {
+    background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+    border: 1px solid #34d399;
+}
+
+.btn-x {
+    background: linear-gradient(135deg, #ef4444 0%, #b91c1c 100%);
+    border: 1px solid #f87171;
+}
+
+.btn-ox:not(:disabled):hover {
+    transform: scale(1.05);
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.4);
+}
+
+/* Focused Quiz Container */
+.app-container.focused {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 2px rgba(56, 189, 248, 0.5), var(--glass-shadow);
+}
+
+
+/* Progress */
+#progress-container {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    width: 200px;
+}
+
+#progress-text {
+    font-size: 0.8rem;
+    color: var(--text-muted);
+    font-weight: 700;
+}
+
+.progress-bar {
+    flex: 1;
+    height: 6px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 3px;
+    overflow: hidden;
+}
+
+#progress-fill {
+    height: 100%;
+    background: var(--accent);
+    width: 0%;
+    transition: width 0.3s;
+}
+
+/* Modals */
+.modal {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.8);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 100;
+    backdrop-filter: blur(5px);
+}
+
+.modal-content {
+    background: #1e293b;
+    padding: 30px;
+    border-radius: 24px;
+    width: 90%;
+    max-width: 400px;
+    text-align: center;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.feedback-content {
+    background: linear-gradient(145deg, #1e293b, #0f172a);
+}
+
+.icon {
+    font-size: 3rem;
+    margin-bottom: 15px;
+}
+
+#feedback-reason {
+    color: var(--text-muted);
+    margin: 15px 0 25px;
+    font-size: 1.1rem;
+}
+
+textarea {
+    width: 100%;
+    height: 150px;
+    background: rgba(0, 0, 0, 0.3);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    color: white;
+    border-radius: 10px;
+    padding: 15px;
+    margin: 15px 0;
+    resize: none;
+    font-family: var(--font-body);
+}
+
+/* Report */
+.circular-chart {
+    display: block;
+    margin: 10px auto;
+    max-width: 80%;
+    max-height: 250px;
+}
+
+.circle-bg {
+    fill: none;
+    stroke: rgba(255, 255, 255, 0.05);
+    stroke-width: 3.8;
+}
+
+.circle {
+    fill: none;
+    stroke-width: 2.8;
+    stroke-linecap: round;
+    transition: stroke-dasharray 1s ease-out;
+}
+
+.circular-chart.blue .circle {
+    stroke: var(--accent);
+}
+
+.percentage {
+    fill: white;
+    font-family: var(--font-heading);
+    font-weight: bold;
+    font-size: 0.5em;
+    text-anchor: middle;
+}
+
+.highlight-green {
+    color: var(--correct);
+    font-weight: bold;
+}
+
+.highlight-red {
+    color: var(--wrong);
+    font-weight: bold;
+}
+
+.wrong-section-scroll {
+    margin-top: 20px;
+    text-align: left;
+    flex: 1;
+    overflow-y: auto;
+    min-height: 0;
+}
+
+#collo-wrong-items-list,
+#vocab-wrong-items-list {
+    list-style: none;
+    margin-top: 10px;
+    font-size: 0.9rem;
+    color: var(--text-muted);
+}
+
+#collo-wrong-items-list li,
+#vocab-wrong-items-list li {
+    padding: 5px 0;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+/* Animation Utils */
+@keyframes popIn {
+    0% {
+        transform: scale(0.9);
+        opacity: 0;
+    }
+
+    100% {
+        transform: scale(1);
+        opacity: 1;
+    }
+}
+
+.modal-content {
+    animation: popIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+/* Mobile Responsiveness */
+@media (max-width: 768px) {
+    body {
+        align-items: flex-start;
+        height: auto;
+        padding: 10px;
+        overflow-y: auto;
+    }
+
+    .main-layout {
+        flex-direction: column;
+        height: auto;
+        max-height: none;
+        gap: 20px;
+    }
+
+    .app-container {
+        width: 100%;
+        min-width: 0;
+        height: auto;
+        min-height: 500px;
+    }
+}
