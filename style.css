@@ -354,7 +354,11 @@ textarea {
     fill: none;
     stroke-width: 2.8;
     stroke-linecap: round;
-    transition: stroke-dasharray 1s ease-out;
+    /* transition is handled in JS for precise control on replay */
+    transition: stroke-dashoffset 1s ease-out;
+    transform: rotate(-90deg);
+    /* Start from top */
+    transform-origin: center;
 }
 
 .circular-chart.blue .circle {
@@ -366,6 +370,7 @@ textarea {
     font-family: var(--font-heading);
     font-weight: bold;
     font-size: 0.5em;
+    /* 0.5em is relative to viewBox 36 */
     text-anchor: middle;
 }
 
