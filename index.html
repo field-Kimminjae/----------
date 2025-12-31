@@ -43,7 +43,11 @@
                     <button id="collo-btn-review" class="btn-secondary hidden" style="margin-bottom: 10px;">틀린 문제 다시
                         보기</button>
                     <!-- Data Button removed for simplicity in dual view or kept locally -->
-                    <button id="collo-btn-data" class="btn-text">데이터 추가</button>
+                    <div class="footer-actions">
+                        <button id="collo-btn-data" class="btn-text">데이터 추가</button>
+                        <span class="divider">|</span>
+                        <button id="collo-btn-view-db" class="btn-text">DB 전체 보기</button>
+                    </div>
                 </div>
             </section>
 
@@ -110,7 +114,11 @@
                         </div>
                     </div>
                     <button id="vocab-btn-start" class="btn-primary">학습 시작하기</button>
-                    <button id="vocab-btn-review" class="btn-secondary hidden">틀린 문제 다시 보기</button>
+                    <div class="footer-actions">
+                        <button id="vocab-btn-data" class="btn-text">데이터 추가</button>
+                        <span class="divider">|</span>
+                        <button id="vocab-btn-view-db" class="btn-text">DB 전체 보기</button>
+                    </div>
                 </div>
             </section>
 
@@ -184,11 +192,54 @@
         <!-- Data Modal (Only for Collo) -->
         <div id="collo-data-modal" class="modal hidden">
             <div class="modal-content">
-                <h3>데이터 추가</h3>
+                <h3>데이터 추가 (Collo)</h3>
                 <textarea id="collo-data-input" placeholder="새로운 데이터를 이곳에 붙여넣으세요..."></textarea>
                 <div class="modal-actions">
                     <button id="collo-btn-cancel-data" class="btn-secondary">취소</button>
                     <button id="collo-btn-save-data" class="btn-primary">저장 및 병합</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Vocab Data Modal -->
+        <div id="vocab-data-modal" class="modal hidden">
+            <div class="modal-content">
+                <h3>데이터 추가 (Vocab)</h3>
+                <p style="font-size: 0.8rem; color: #94a3b8; margin-bottom: 10px;">
+                    형식 예시: <br>
+                    1. Word (Meaning)<br>
+                    또는 JSON 형식
+                </p>
+                <textarea id="vocab-data-input"
+                    placeholder="1. Serendipity (뜻밖의 행운)&#10;2. Ephemeral (덧없는)..."></textarea>
+                <div class="modal-actions">
+                    <button id="vocab-btn-cancel-data" class="btn-secondary">취소</button>
+                    <button id="vocab-btn-save-data" class="btn-primary">저장 및 병합</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- DB View Modals -->
+        <div id="collo-db-modal" class="modal hidden">
+            <div class="modal-content large-modal">
+                <div class="modal-header">
+                    <h3>Collocation DB</h3>
+                    <button id="collo-btn-close-db" class="close-btn">&times;</button>
+                </div>
+                <div class="db-list-container">
+                    <ul id="collo-db-list" class="db-list"></ul>
+                </div>
+            </div>
+        </div>
+
+        <div id="vocab-db-modal" class="modal hidden">
+            <div class="modal-content large-modal">
+                <div class="modal-header">
+                    <h3>Vocab Context DB</h3>
+                    <button id="vocab-btn-close-db" class="close-btn">&times;</button>
+                </div>
+                <div class="db-list-container">
+                    <ul id="vocab-db-list" class="db-list"></ul>
                 </div>
             </div>
         </div>

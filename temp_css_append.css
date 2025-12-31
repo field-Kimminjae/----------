@@ -1,0 +1,138 @@
+/* Footer Actions for Start View */
+.footer-actions {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 15px;
+    margin-top: 20px;
+}
+
+.divider {
+    color: rgba(255, 255, 255, 0.2);
+    font-size: 0.8rem;
+}
+
+/* Ensure btn-text resets margin inside footer-actions if needed */
+.footer-actions .btn-text {
+    margin-top: 0;
+}
+
+/* Large Modal for DB View */
+.large-modal {
+    max-width: 600px;
+    width: 95%;
+    text-align: left;
+    display: flex;
+    flex-direction: column;
+    max-height: 85vh;
+    /* Max height for scrollability */
+    padding: 25px;
+}
+
+.modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+    padding-bottom: 15px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.modal-header h3 {
+    margin: 0;
+    font-size: 1.4rem;
+    color: var(--text-main);
+}
+
+.close-btn {
+    background: none;
+    border: none;
+    color: var(--text-muted);
+    font-size: 2rem;
+    line-height: 1;
+    cursor: pointer;
+    padding: 0 5px;
+}
+
+.close-btn:hover {
+    color: white;
+}
+
+/* DB List Styling */
+.db-list-container {
+    overflow-y: auto;
+    padding-right: 5px;
+    flex: 1;
+    /* Take remaining height */
+    /* Custom Scrollbar for Webkit */
+    scrollbar-width: thin;
+    scrollbar-color: rgba(255, 255, 255, 0.2) transparent;
+}
+
+/* Webkit scrollbar styling */
+.db-list-container::-webkit-scrollbar {
+    width: 6px;
+}
+
+.db-list-container::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.db-list-container::-webkit-scrollbar-thumb {
+    background-color: rgba(255, 255, 255, 0.2);
+    border-radius: 3px;
+}
+
+.db-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+.db-list li {
+    background: rgba(255, 255, 255, 0.03);
+    padding: 15px;
+    margin-bottom: 12px;
+    border-radius: 12px;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    transition: background 0.2s;
+}
+
+.db-list li:hover {
+    background: rgba(255, 255, 255, 0.06);
+}
+
+.db-list li strong {
+    color: var(--accent);
+    display: block;
+    margin-bottom: 6px;
+    font-size: 1.1rem;
+}
+
+.db-list li .meta {
+    font-size: 0.85rem;
+    color: var(--text-muted);
+    margin-bottom: 10px;
+    display: flex;
+    gap: 10px;
+    align-items: center;
+}
+
+.db-list li .tag {
+    background: rgba(56, 189, 248, 0.1);
+    color: var(--accent);
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-size: 0.75rem;
+    font-weight: 600;
+}
+
+.db-list li .explanation {
+    font-size: 0.95rem;
+    color: #e2e8f0;
+    line-height: 1.5;
+    background: rgba(0, 0, 0, 0.3);
+    padding: 10px 14px;
+    border-radius: 8px;
+    border-left: 3px solid var(--accent);
+}

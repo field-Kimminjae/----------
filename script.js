@@ -150,10 +150,16 @@ class QuizGame {
 
                 // Data Modal (Optional)
                 btnData: get(`${prefix}btn-data`),
+                btnViewDB: get(`${prefix}btn-view-db`), // NEW: View DB Button
+
                 modalData: get(`${prefix}data-modal`),
                 inputData: get(`${prefix}data-input`),
                 btnSaveData: get(`${prefix}btn-save-data`),
                 btnCancelData: get(`${prefix}btn-cancel-data`),
+
+                modalDB: get(`${prefix}db-modal`), // NEW: DB View Modal
+                dbList: get(`${prefix}db-list`),   // NEW: DB List Container
+                btnCloseDB: get(`${prefix}btn-close-db`), // NEW: Close DB Button
             };
         } catch (e) {
             console.error("UI Binding Error:", e);
@@ -230,21 +236,98 @@ class QuizGame {
         });
 
         // Data Modal Events (Collo only)
-        if (this.type === 'collo' && this.ui.btnData) {
+        // Data Modal Events (Existing Collo + New Vocab)
+        if (this.ui.btnData) {
             this.ui.btnData.addEventListener('click', () => this.ui.modalData.classList.remove('hidden'));
             this.ui.btnCancelData.addEventListener('click', () => this.ui.modalData.classList.add('hidden'));
             this.ui.btnSaveData.addEventListener('click', () => {
                 const txt = this.ui.inputData.value;
-                const newItems = this.parseColloData(txt);
+                let newItems = [];
+
+                if (this.type === 'collo') {
+                    newItems = this.parseColloData(txt);
+                } else {
+                    newItems = this.parseVocabData(txt);
+                }
+
                 if (newItems.length > 0) {
                     this.list = [...this.list, ...newItems];
-                    this.ui.totalItemsCount.innerText = this.list.length;
+                    this.ui.totalItemsCount.innerText = this.list.length; // Update Stats
                     alert(`${newItems.length} added!`);
                     this.ui.modalData.classList.add('hidden');
                     this.ui.inputData.value = "";
+                } else {
+                    alert("데이터 파싱 실패: 올바른 형식이 아닙니다.");
                 }
             });
         }
+
+        // View DB Events
+        if (this.ui.btnViewDB) {
+            this.ui.btnViewDB.addEventListener('click', () => this.openDatabase());
+            this.ui.btnCloseDB.addEventListener('click', () => this.ui.modalDB.classList.add('hidden'));
+        }
+    }
+
+    parseVocabData(text) {
+        // 1. Try JSON
+        try {
+            const json = JSON.parse(text);
+            if (Array.isArray(json)) return json;
+        } catch (e) { /* Not JSON */ }
+
+        // 2. Text Parsing (Pattern: "1. Word (Meaning)")
+        const lines = text.split('\n').filter(line => line.trim().length > 0);
+        return lines.map(line => {
+            const match = line.match(/^(?:\d+\.\s*)?(.+?)\s*\((.+)\)$/);
+            if (match) {
+                const word = match[1].trim();
+                const meaning = match[2].trim();
+                return {
+                    sentence: `What is the meaning of '${word}'?`,
+                    word: word,
+                    answer: "O",
+                    explanation: `[원칙 (1) 문맥] ${meaning}`
+                };
+            }
+            return null;
+        }).filter(item => item !== null);
+    }
+
+    openDatabase() {
+        this.ui.dbList.innerHTML = '';
+        const items = [...this.list];
+
+        if (items.length === 0) {
+            this.ui.dbList.innerHTML = '<li>데이터가 없습니다.</li>';
+        } else {
+            items.forEach((item, index) => {
+                const li = document.createElement('li');
+                if (this.type === 'collo') {
+                    li.innerHTML = `
+                        <strong>${index + 1}. ${item.original}</strong>
+                        <div class="meta">
+                            <span class="tag">${item.principle || 'General'}</span>
+                            <span>Meaning: ${item.meaning}</span>
+                        </div>
+                    `;
+                } else {
+                    // Vocab
+                    li.innerHTML = `
+                        <strong>${index + 1}. ${item.word}</strong>
+                        <div class="meta">
+                             <span class="tag">${item.answer || 'O'}</span>
+                             <span>${item.sentence}</span>
+                        </div>
+                        <div class="explanation">
+                            ${item.explanation}
+                        </div>
+                    `;
+                }
+                this.ui.dbList.appendChild(li);
+            });
+        }
+        this.ui.modalDB.classList.remove('hidden');
     }
 
     startGame(isReview) {
