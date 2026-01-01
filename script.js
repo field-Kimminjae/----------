@@ -102,6 +102,10 @@ class QuizGame {
         this.isWaiting = false; // For 1.5s delay
         this.timer = null;
 
+        // Pagination State
+        this.dbCurrentPage = 1;
+        this.dbItemsPerPage = 5;
+
         // UI References
         this.ui = this.safeGetUI(prefix);
         if (!this.ui) {
@@ -160,6 +164,11 @@ class QuizGame {
                 modalDB: get(`${prefix}db-modal`), // NEW: DB View Modal
                 dbList: get(`${prefix}db-list`),   // NEW: DB List Container
                 btnCloseDB: get(`${prefix}btn-close-db`), // NEW: Close DB Button
+
+                // Pagination UI
+                btnDBPrev: get(`${prefix}btn-db-prev`),
+                btnDBNext: get(`${prefix}btn-db-next`),
+                dbPageInfo: get(`${prefix}db-page-info`),
             };
         } catch (e) {
             console.error("UI Binding Error:", e);
@@ -264,8 +273,22 @@ class QuizGame {
 
         // View DB Events
         if (this.ui.btnViewDB) {
-            this.ui.btnViewDB.addEventListener('click', () => this.openDatabase());
+            this.ui.btnViewDB.addEventListener('click', () => this.openDatabase(1));
             this.ui.btnCloseDB.addEventListener('click', () => this.ui.modalDB.classList.add('hidden'));
+
+            // Pagination Events
+            if (this.ui.btnDBPrev) {
+                this.ui.btnDBPrev.addEventListener('click', () => {
+                    const totalPages = Math.ceil(this.list.length / this.dbItemsPerPage) || 1;
+                    if (this.dbCurrentPage > 1) this.openDatabase(this.dbCurrentPage - 1);
+                });
+            }
+            if (this.ui.btnDBNext) {
+                this.ui.btnDBNext.addEventListener('click', () => {
+                    const totalPages = Math.ceil(this.list.length / this.dbItemsPerPage) || 1;
+                    if (this.dbCurrentPage < totalPages) this.openDatabase(this.dbCurrentPage + 1);
+                });
+            }
         }
     }
 
@@ -294,18 +317,30 @@ class QuizGame {
         }).filter(item => item !== null);
     }
 
-    openDatabase() {
+    openDatabase(page = 1) {
+        this.dbCurrentPage = page;
         this.ui.dbList.innerHTML = '';
         const items = [...this.list];
 
-        if (items.length === 0) {
+        const totalItems = items.length;
+        const totalPages = Math.ceil(totalItems / this.dbItemsPerPage) || 1;
+
+        if (this.dbCurrentPage < 1) this.dbCurrentPage = 1;
+        if (this.dbCurrentPage > totalPages) this.dbCurrentPage = totalPages;
+
+        const start = (this.dbCurrentPage - 1) * this.dbItemsPerPage;
+        const end = start + this.dbItemsPerPage;
+        const pageItems = items.slice(start, end);
+
+        if (totalItems === 0) {
             this.ui.dbList.innerHTML = '<li>데이터가 없습니다.</li>';
         } else {
-            items.forEach((item, index) => {
+            pageItems.forEach((item, index) => {
+                const realIndex = start + index;
                 const li = document.createElement('li');
                 if (this.type === 'collo') {
                     li.innerHTML = `
-                        <strong>${index + 1}. ${item.original}</strong>
+                        <strong>${realIndex + 1}. ${item.original}</strong>
                         <div class="meta">
                             <span class="tag">${item.principle || 'General'}</span>
                             <span>Meaning: ${item.meaning}</span>
@@ -314,7 +349,7 @@ class QuizGame {
                 } else {
                     // Vocab
                     li.innerHTML = `
-                        <strong>${index + 1}. ${item.word}</strong>
+                        <strong>${realIndex + 1}. ${item.word}</strong>
                         <div class="meta">
                              <span class="tag">${item.answer || 'O'}</span>
                              <span>${item.sentence}</span>
@@ -327,6 +362,14 @@ class QuizGame {
                 this.ui.dbList.appendChild(li);
             });
         }
+
+        // Update Pagination Controls
+        if (this.ui.dbPageInfo) {
+            this.ui.dbPageInfo.innerText = `${this.dbCurrentPage} / ${totalPages}`;
+            this.ui.btnDBPrev.disabled = (this.dbCurrentPage <= 1);
+            this.ui.btnDBNext.disabled = (this.dbCurrentPage >= totalPages);
+        }
+
         this.ui.modalDB.classList.remove('hidden');
     }
 
