@@ -1,0 +1,100 @@
+fair | O | The recruitment process was deemed _______ and transparent by all candidates. | [원칙 (1) 문맥] 투명하고 '공정한' 채용 과정이라는 의미가 자연스럽습니다.
+list | O | Please _______ your previous work experiences in the application form. | [원칙 (2) 문법] 타동사 자리로 '목록에 기입하다'라는 의미의 동사 list가 적절합니다.
+aptitude | O | The candidate has a natural _______ for computer programming. | [원칙 (1) 문맥] 프로그래밍에 대한 타고난 '적성/재능'을 뜻하므로 적절합니다.
+be admitted to | X | All visitors are _______ to show their ID at the entrance. | [원칙 (3) 콜로케이션] 입장하다는 'be admitted to'이나, 이 문장은 '권고받다'인 'be advised to'가 문맥상 더 정확하거나 구조가 다릅니다.
+criteria | O | The selection _______ for the new manager are very strict. | [원칙 (1) 문맥] 선택 '기준'이라는 의미의 복수 명사로 적절합니다.
+insufficient | O | The evidence provided was _______ to support the claim. | [원칙 (1) 문맥] 주장을 뒷받침하기에 '불충분한'이라는 뜻이 논리적입니다.
+particular | O | He has _______ experience in the field of international trade. | [원칙 (1) 문맥] 국제 무역 분야의 '특정한/실무적' 경험을 의미합니다.
+reference letter | O | A strong _______ from your former employer is required. | [원칙 (1) 문맥] 고용주가 써주는 '추천서'를 의미하므로 적절합니다.
+excel | O | The company aims to _______ in customer service satisfaction. | [원칙 (1) 문맥] 서비스 만족도 면에서 '능가하다/뛰어나다'는 의미로 적절합니다.
+talented | O | She is a highly _______ applicant with multiple certifications. | [원칙 (1) 문맥] 자격증이 많은 '유능한' 지원자라는 의미가 자연스럽습니다.
+workforce | O | The total _______ has increased by 10% this year. | [원칙 (1) 문맥] 회사의 '직원 수/노동인구'가 증가했다는 의미입니다.
+endurance | O | He showed great _______ by finishing the marathon despite the pain. | [원칙 (1) 문맥] 고통에도 불구하고 완주한 '인내력'을 뜻합니다.
+bilingual | O | The applicant is _______ and can speak both English and Spanish. | [원칙 (1) 문맥] 2개 국어를 구사한다는 내용과 일치합니다.
+make a commitment to | O | Employees are encouraged to _______ to the company's goals. | [원칙 (3) 콜로케이션] ~에 헌신/전념하다는 뜻의 숙어 표현입니다.
+makes a point of | O | The manager _______ always arriving early for meetings. | [원칙 (3) 콜로케이션] '반드시 ~하다'라는 관용 구문입니다.
+novice | O | Even a _______ can learn the basics within a week. | [원칙 (1) 문맥] '초보자/무경험자'도 배울 수 있다는 흐름이 자연스럽습니다.
+firsthand | O | He gained _______ experience by working on the factory floor. | [원칙 (1) 문맥] 직접 몸으로 부딪쳐 얻은 '직접적인' 경험을 뜻합니다.
+screening | O | The initial _______ process will take about two weeks. | [원칙 (1) 문맥] 지원자를 걸러내는 '심사/선발' 과정을 의미합니다.
+replenish | O | We need to _______ the office supplies before the week ends. | [원칙 (1) 문맥] 부족한 비품을 '다시 채우다/보충하다'는 의미입니다.
+commensurate | O | Your salary will be _______ with your level of experience. | [원칙 (3) 콜로케이션] ~에 '비례하는/상응하는'의 의미로 전치사 with와 자주 쓰입니다.
+prerequisite | O | Passing the exam is a _______ for graduation. | [원칙 (1) 문맥] 졸업을 위한 '필수 전제 조건'을 의미합니다.
+part time | O | We are hiring for a _______ position in the sales department. | [원칙 (1) 문맥] 정규직이 아닌 '시간제/파트타임' 직책을 의미합니다.
+attitude | O | Her positive _______ influences the whole team. | [원칙 (1) 문맥] 팀에 영향을 주는 긍정적인 '태도'가 문맥상 적절합니다. (Aptitude는 적성)
+party | O | I will attend the year-end _______ with my colleagues. | [원칙 (1) 문맥] 동료들과 참석하는 연말 '파티/모임'이 자연스럽습니다.
+reapply | O | Applicants may _______ if they were rejected previously. | [원칙 (1) 문맥] 이전에 거절당했다면 '재지원' 할 수 있다는 내용입니다.
+training center | O | All new hires must attend the orientation at the _______. | [원칙 (1) 문맥] 신입 사원들이 교육받는 '연수원/훈련 센터'입니다.
+well-educated | O | He comes from a _______ background and speaks politely. | [원칙 (1) 문맥] 예의 바르게 말하는 것으로 보아 '잘 교육받은/교양 있는' 배경이 어울립니다.
+exclude | O | The manager decided to _______ the incomplete data from the report. | [원칙 (1) 문맥] 불완전한 데이터를 보고서에서 '제외하다'는 논리가 맞습니다.
+visiting | O | We have a _______ scholar from Oxford University this semester. | [원칙 (3) 콜로케이션] '객원 학자/방문 교수'를 뜻하는 visiting scholar가 자연스러운 짝꿍입니다.
+address the audience | O | The CEO will _______ to announce the new strategy. | [원칙 (3) 콜로케이션] 청중에게 '연설하다'는 표현입니다.
+diploma | O | Please submit a copy of your high school _______. | [원칙 (1) 문맥] 고등학교 '졸업장' 제출을 요구하는 상황입니다.
+go with | O | I decided to _______ the committee's suggestion. | [원칙 (3) 콜로케이션] 제안을 '받아들이다/선택하다'라는 구동사 표현입니다.
+paycheck | O | You will receive your _______ on the last Friday of the month. | [원칙 (1) 문맥] 월급날에 받는 '급여 수표/월급'을 의미합니다.
+self-motivation | O | Success in sales requires a high level of _______. | [원칙 (1) 문맥] 영업 성공을 위해 필요한 '자기 동기부여'입니다.
+credential | O | Please present your _______ upon arrival at the conference. | [원칙 (1) 문맥] 신원을 증명하는 '자격 증명서/신분증'을 제시해야 합니다.
+on occasion | O | We like to dine out _______ to celebrate special events. | [원칙 (1) 문맥] 특별한 날을 위해 '가끔/때때로' 외식한다는 의미입니다.
+lag | O | The project began to _______ behind schedule due to delays. | [원칙 (3) 콜로케이션] 일정보다 '뒤쳐지다'는 lag behind가 짝꿍입니다.
+pertaining | O | Review all documents _______ to the merger carefully. | [원칙 (2) 문법] 합병에 '관련된'이라는 분사구문으로 pertaining to가 적절합니다.
+questionable | O | His decision to quit without notice was _______. | [원칙 (1) 문맥] 예고 없는 퇴사는 '의문스러운/문제가 있는' 행동입니다.
+regularity | O | The machines are inspected with _______ to ensure safety. | [원칙 (1) 문맥] 안전을 위해 '규칙적임/정기적임'을 가지고 검사한다는 명사형이 적절합니다.
+stellar | O | She has a _______ reputation in the legal community. | [원칙 (1) 문맥] 법조계에서 '뛰어난/별처럼 빛나는' 평판을 가졌다는 칭찬입니다.
+versatile | O | This tool is _______ and can be used for cutting and sanding. | [원칙 (1) 문맥] 여러 용도로 쓰이는 '다재다능한/용도가 다양한' 도구입니다.
+against all odds | O | They succeeded _______ and finished the project on time. | [원칙 (3) 콜로케이션] 모든 역경을 '무릅쓰고/딛고' 성공했다는 관용구입니다.
+sternly | O | The teacher looked _______ at the student who cheated. | [원칙 (1) 문맥] 부정행위를 한 학생을 '엄격하게/단호하게' 쳐다봤다는 부사가 적절합니다.
+probationer | O | As a _______, he is still under supervision. | [원칙 (1) 문맥] 아직 감독을 받는 '수습 사원/견습생' 신분입니다.
+aptitude | X | The manager showed a lack of _______ by ignoring the team's input. | [원칙 (1) 문맥] 문맥상 '태도(attitude)'가 부족하다는 것이지, '적성(aptitude)'이 부족하다는 것은 어색합니다.
+include | O | Please _______ the data from the final report. | [원칙 (1) 문맥] 데이터를 '포함하다'는 의미입니다. (함정: exclude와 혼동 주의)
+unrelated | X | The contract terms were _______ to the client's demands. | [원칙 (1) 문맥] 고객 요구에 '상응하는(commensurate)'이어야지, '관련 없는(unrelated)'은 문맥상 어색합니다.
+cautiously | X | He is a _______ driver who speeds often. | [원칙 (2) 문법] 명사 driver를 수식하려면 형용사 cautious가 와야 하며, 과속하는 사람은 조심스럽지 않습니다.
+attire | O | Guests are required to wear formal _______ at the gala. | [원칙 (1) 문맥] 공식적인 행사에서 요구되는 '복장/의복'을 의미합니다.
+code | O | The strict dress _______ prohibits jeans in the office. | [원칙 (1) 문맥] 복장 '규정(code)'을 의미하는 문맥입니다. (dress code)
+concern | O | Safety is our primary _______ in the factory. | [원칙 (1) 문맥] 공장에서의 가장 중요한 '관심사/우려'는 안전입니다.
+politics | X | We need to discuss the new company _______. | [원칙 (1) 문맥] 회사의 '규정/정책'을 말할 때는 'policy'가 적절합니다. Politics는 '정치'를 뜻합니다.
+approach | O | We need a new _______ to solve this problem. | [원칙 (1) 문맥] 문제 해결을 위한 새로운 '접근법'이 필요하다는 의미입니다.
+approve | X | He finally gave his _______ for the project. | [원칙 (2) 문법] 소유격(his) 뒤에는 명사 'approval'이 와야 합니다. Approve는 동사입니다.
+mandate | O | The committee has a _______ to reform the system. | [원칙 (1) 문맥] 시스템을 개혁할 '권한/지시'를 가지고 있다는 의미입니다.
+affect | X | The new tax law will take _______ next month. | [원칙 (3) 콜로케이션] '효력을 발휘하다'는 take effect입니다. Affect는 '영향을 미치다'라는 동사입니다.
+drastically | O | Sales have increased _______ since the marketing campaign. | [원칙 (1) 문맥] 캠페인 이후 매출이 '급격하게/과감하게' 증가했다는 의미입니다.
+enable | X | This software _______ us to process data faster. | [원칙 (2) 문법] Enable은 'enable + 목적어 + to do' 형태를 취해야 합니다 (예: enables us to). 주어 단수 시 enables가 되어야 합니다.
+constant | O | The machine makes a _______ noise. | [원칙 (1) 문맥] 기계가 '끊임없는/지속적인' 소음을 낸다는 의미입니다.
+compensate | O | The company will _______ employees for overtime work. | [원칙 (1) 문맥] 초과 근무에 대해 '보상하다'는 의미입니다.
+authorize | O | Who did _______ the purchase of this equipment? | [원칙 (1) 문맥] 장비 구매를 누가 '승인/허가'했는지 묻는 문장입니다.
+autograph | O | Can I have your _______ on this book? | [원칙 (1) 문맥] 책에 저자의 '서명(싸인)'을 요청하는 상황입니다.
+enforce | O | Police are here to _______ the law. | [원칙 (3) 콜로케이션] 법을 '집행하다/시행하다'는 enforce the law가 적절합니다.
+legislator | X | The new _______ was passed by the parliament. | [원칙 (1) 문맥] 의회에 의해 통과된 것은 '법률(legislation)'입니다. Legislator는 '입법자(국회의원)'를 뜻합니다.
+bend over | O | Please _______ to pick up the box. | [원칙 (1) 문맥] 상자를 집기 위해 '몸을 굽히다'는 표현입니다.
+if it's okay | O | I will borrow your pen, _______. | [원칙 (1) 문맥] '괜찮다면' 펜을 빌리겠다는 정중한 표현입니다.
+in case of | O | Press the button _______ emergency. | [원칙 (3) 콜로케이션] 비상 '시에는/경우에 대비하여'라는 전치사구입니다.
+let go | O | The company decided to _______ the temporary workers. | [원칙 (1) 문맥] 임시직 근로자들을 '해고하다/보내주다'는 의미의 관용구입니다.
+ruler | X | He is the _______ of this measuring tool. | [원칙 (1) 문맥] 사람(ruler: 통치자)이 아니라 도구이므로 잴 때 쓰는 '자(ruler)'인 척하지만 문맥상 도구의 '주인(owner)'이나 다른 말이 와야 자연스럽지 않나요? 아, 여기서는 'He is the ruler...'가 아니라 'This is the ruler...'여야 하는데 'He'라고 해서 오답 처리 가능합니다.
+curriculum | O | The school's _______ covers math and science. | [원칙 (1) 문맥] 학교의 '교육 과정'을 의미합니다.
+enough rich | X | He is _______ to buy the car. | [원칙 (2) 문법] 형용사 수식 시 enough는 뒤에서 수식해야 합니다 (rich enough).
+have a problem | O | I _______ understanding his accent. | [원칙 (2) 문법] have a problem (in) -ing: ~하는 데 어려움을 겪다.
+law firm | O | She works at a prestigious _______. | [원칙 (1) 문맥] 명망 있는 '법률 사무소'에서 일한다는 의미입니다.
+seldom | O | We _______ see him at the office these days. | [원칙 (1) 문맥] 요즘 사무실에서 그를 '좀처럼 보기 힘들다(드물게 본다)'는 의미입니다.
+theft | O | He was arrested for _______. | [원칙 (1) 문맥] '절도' 혐의로 체포되었다는 의미입니다.
+try | X | We must _______ the traffic rules. | [원칙 (1) 문맥] 교통 법규는 노력하는(try) 게 아니라 준수해야(obey/observe) 합니다.
+witness | O | I was a _______ to the accident. | [원칙 (1) 문맥] 사고의 '목격자'였다는 의미입니다.
+right | X | Please _______ your name clearly. | [원칙 (1) 문맥] 이름을 '쓰다'는 'write'입니다. Right는 '오른쪽/옳은'입니다.
+by all means | O | You should visit us _______. | [원칙 (1) 문맥] '반드시/꼭' 방문해 달라는 강조 표현입니다.
+by mistake | O | I took the wrong bag _______. | [원칙 (1) 문맥] '실수로' 잘못된 가방을 가져갔다는 의미입니다.
+come to an end | O | The meeting will soon _______. | [원칙 (3) 콜로케이션] '끝나다/종료되다'라는 관용 표현입니다.
+held down | X | The robbers _______ the bank. | [원칙 (3) 콜로케이션] 은행을 털다는 'hold up'입니다. Hold down은 '억누르다'입니다.
+If I'm not mistaken | O | _______, that is Mr. Kim. | [원칙 (1) 문맥] '재 기억이 맞다면(내가 실수하는 게 아니라면)'이라는 표현입니다.
+in progress | O | Construction is currently _______. | [원칙 (1) 문맥] 공사가 현재 '진행 중'이라는 의미입니다.
+legal counsel | O | You should consult with _______. | [원칙 (1) 문맥] '법률 자문/변호인'과 상담해야 한다는 의미입니다.
+suspect | O | The police questioned the _______. | [원칙 (1) 문맥] 경찰이 '용의자'를 심문했다는 의미입니다.
+to one's advice | X | I acted _______. | [원칙 (3) 콜로케이션] 조언에 따라는 'on one's advice' 또는 'following one's advice'가 자연스럽습니다. 'to one's advice'는 어색합니다.
+to one's advantage | O | Use the situation _______. | [원칙 (3) 콜로케이션] 상황을 '자신에게 유리하게' 이용하라는 관용구입니다.
+under the supervision | O | Students are _______ of the teacher. | [원칙 (1) 문맥] 학생들이 선생님의 '감독 하에' 있다는 의미입니다.
+abuse | O | You should not _______ your power. | [원칙 (1) 문맥] 권력을 '남용'해서는 안 된다는 의미입니다.
+alertly | X | The guard remained _______ all night. | [원칙 (2) 문법] remain은 불완전 자동사이므로 형용사 보어 'alert'가 와야 합니다. 부사 alertly는 틀립니다.
+at all times | O | Keep your ID visible _______. | [원칙 (3) 콜로케이션] '항상/언제나' ID를 보이게 하라는 의미입니다.
+disobedient | O | The child was _______ and refused to listen. | [원칙 (1) 문맥] 말을 듣지 않는 '반항적인' 아이라는 의미입니다.
+endure | X | This small elevator cannot _______ 20 people. | [원칙 (1) 문맥] 사람을 수용하다는 'accommodate'나 'hold'가 적절합니다. Endure는 고통을 '참다'입니다.
+exemplary | O | She showed _______ behavior in class. | [원칙 (1) 문맥] 수업에서 '모범적인' 태도를 보였다는 의미입니다.
+in accordance with | O | We acted _______ the rules. | [원칙 (3) 콜로케이션] 규칙 '에 따라서' 행동했다는 숙어입니다.
+indecisive | O | He is too _______ to choose a menu. | [원칙 (1) 문맥] 메뉴를 고르지 못할 정도로 '우유부단한' 성격이라는 의미입니다.
+obey | O | Soldiers must _______ orders. | [원칙 (1) 문맥] 군인은 명령에 '복종'해야 합니다.
+on-site | O | We offer _______ repairs. | [원칙 (1) 문맥] '현장' 수리 서비스를 제공한다는 의미입니다.
