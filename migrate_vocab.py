@@ -2,8 +2,9 @@ import re
 import os
 
 # Path to script.js
-script_path = r"c:\Users\user\OneDrive\데스크탑\Desktop\토익 공부 웹사이트\script.js"
-output_path = r"c:\Users\user\OneDrive\데스크탑\Desktop\토익 공부 웹사이트\[TOEIC_Vocabulary].txt"
+base_dir = os.path.dirname(os.path.abspath(__file__))
+script_path = os.path.join(base_dir, "script.js")
+output_path = os.path.join(base_dir, "[TOEIC_Vocabulary].txt")
 
 def extract_data():
     with open(script_path, 'r', encoding='utf-8') as f:
