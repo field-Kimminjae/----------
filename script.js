@@ -274,12 +274,37 @@ class QuizGame {
     }
 
     loadData() {
+        let baseData = [];
         if (this.type === 'collo') {
-            this.list = this.parseColloData(this.rawData);
+            baseData = this.parseColloData(this.rawData);
         } else {
-            this.list = [...this.rawData];
+            baseData = [...this.rawData];
         }
-        if (this.ui.totalItemsCount) this.ui.totalItemsCount.innerText = this.list.length;
+
+        const userData = this.loadUserAddedData();
+        this.list = [...baseData, ...userData];
+        
+        this.updateTotalCountUI();
+    }
+
+    loadUserAddedData() {
+        const key = `toeic_user_data_${this.type}`;
+        const stored = localStorage.getItem(key);
+        return stored ? JSON.parse(stored) : [];
+    }
+
+    saveUserAddedData(newItems) {
+        if (!newItems || newItems.length === 0) return;
+        const key = `toeic_user_data_${this.type}`;
+        const current = this.loadUserAddedData();
+        const merged = [...current, ...newItems];
+        localStorage.setItem(key, JSON.stringify(merged));
+    }
+
+    updateTotalCountUI() {
+        if (this.ui.totalItemsCount) {
+             this.ui.totalItemsCount.innerText = this.list.length;
+        }
     }
 
     parseColloData(text) {
@@ -351,8 +376,9 @@ class QuizGame {
                 }
 
                 if (newItems.length > 0) {
+                    this.saveUserAddedData(newItems);
                     this.list = [...this.list, ...newItems];
-                    this.ui.totalItemsCount.innerText = this.list.length; // Update Stats
+                    this.updateTotalCountUI(); // Update Stats
                     alert(`${newItems.length} added!`);
                     this.ui.modalData.classList.add('hidden');
                     this.ui.inputData.value = "";
@@ -782,6 +808,9 @@ function requestActiveGame(game) {
 
 document.addEventListener('keydown', (e) => {
     if (!activeGame) return;
+    
+    // Fix Bug 1: Prevent shortcuts when typing in Input/Textarea
+    if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
 
     const key = e.key.toUpperCase();
 
