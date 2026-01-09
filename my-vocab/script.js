@@ -1,14 +1,17 @@
 /**
  * TOEIC Dual Quiz Master
- * Refactored for Side-by-Side Layout
+ * Refactored: Left (LC Memo) / Right (Vocab Quiz)
  */
 
 // 1. Data Sources
 
-// Left: Existing Raw Data
-const INITIAL_DATA_RAW = [];
+// Left: LC Misheard Memo Data
+// Format: Actual | Misheard | Note
+const INITIAL_DATA_RAW = [
+    "All rights reserved | All rights this from | '모든 권리 보유'라는 뜻인데, 소리가 뭉쳐서 'All rights this from'으로 오청함."
+];
 
-// Right: New Dummy Data
+// Right: Vocab Context Quiz Data
 const VOCAB_QUIZ_DATA = [
     { sentence: "I want to _______ my English.", word: "improve", answer: "O", explanation: "문맥상 적절합니다." }
 ];
@@ -20,7 +23,7 @@ const VOCAB_QUIZ_DATA = [
 class QuizGame {
     constructor(prefix, type, data) {
         this.prefix = prefix; // 'collo-' or 'vocab-'
-        this.type = type;     // 'collo' or 'vocab'
+        this.type = type;     // 'collo' (Left) or 'vocab' (Right)
         this.rawData = data;
 
         // State
@@ -60,15 +63,21 @@ class QuizGame {
                 progressText: get(`${prefix}progress-text`),
                 progressFill: get(`${prefix}progress-fill`),
 
-                questionText: get(`${prefix}question-text`),
+                // Quiz View Elements
+                questionText: get(`${prefix}question-text`), // Only for Vocab
+                contentArea: get(`${prefix}content-area`),   // Only for Collo (LC Memo)
+
                 totalItemsCount: get(`${prefix}total-items-count`),
 
+                // Feedback Modal
                 modalFeedback: get(`${prefix}feedback-modal`),
                 feedbackIcon: get(`${prefix}feedback-icon`),
                 feedbackTitle: get(`${prefix}feedback-title`),
                 feedbackReason: get(`${prefix}feedback-reason`),
                 btnNext: get(`${prefix}btn-next`),
 
+                // Report Elements
+                scoreSection: get(`${prefix}score-section`), // To hide for Collo
                 circlePath: get(`${prefix}score-circle-path`),
                 scoreText: get(`${prefix}score-text`),
                 correctCount: get(`${prefix}correct-count`),
@@ -76,25 +85,28 @@ class QuizGame {
                 wrongSection: get(`${prefix}wrong-answers-section`),
                 wrongList: get(`${prefix}wrong-items-list`),
 
+                // Buttons
                 btnStart: get(`${prefix}btn-start`),
-                btnReview: get(`${prefix}btn-review`), // New Review Button
+                btnReview: get(`${prefix}btn-review`),
                 btnRestart: get(`${prefix}btn-restart`),
                 btnStop: get(`${prefix}btn-stop`),
 
-                actionButtons: document.querySelectorAll(`#${prefix}quiz-view .btn-ox`),
+                // Quiz Actions
+                actionButtons: document.querySelectorAll(`#${prefix}quiz-view .btn-ox`), // O/X Buttons
+                btnNextStep: get(`${prefix}btn-next-step`), // 'Next' button for Collo
 
-                // Data Modal (Optional)
+                // Data Modal
                 btnData: get(`${prefix}btn-data`),
-                btnViewDB: get(`${prefix}btn-view-db`), // NEW: View DB Button
+                btnViewDB: get(`${prefix}btn-view-db`),
 
                 modalData: get(`${prefix}data-modal`),
                 inputData: get(`${prefix}data-input`),
                 btnSaveData: get(`${prefix}btn-save-data`),
                 btnCancelData: get(`${prefix}btn-cancel-data`),
 
-                modalDB: get(`${prefix}db-modal`), // NEW: DB View Modal
-                dbList: get(`${prefix}db-list`),   // NEW: DB List Container
-                btnCloseDB: get(`${prefix}btn-close-db`), // NEW: Close DB Button
+                modalDB: get(`${prefix}db-modal`),
+                dbList: get(`${prefix}db-list`),
+                btnCloseDB: get(`${prefix}btn-close-db`),
 
                 // Pagination UI
                 btnDBPrev: get(`${prefix}btn-db-prev`),
@@ -116,13 +128,15 @@ class QuizGame {
     loadData() {
         let baseData = [];
         if (this.type === 'collo') {
-            // Check if rawData is an array (for Personal Master Custom) or old string
+            // LC Memo Parsing
             if (Array.isArray(this.rawData)) {
-                baseData = [...this.rawData];
+                // If already array of strings, parse them
+                baseData = this.parseColloData(this.rawData.join('\n'));
             } else {
                 baseData = this.parseColloData(this.rawData);
             }
         } else {
+            // Vocab (JSON Objects)
             baseData = [...this.rawData];
         }
 
@@ -133,7 +147,7 @@ class QuizGame {
     }
 
     loadUserAddedData() {
-        const key = `personal_toeic_user_data_${this.type}`; // 'personal_' prefix to distinguish from root app
+        const key = `personal_toeic_user_data_${this.type}`;
         const stored = localStorage.getItem(key);
         return stored ? JSON.parse(stored) : [];
     }
@@ -153,105 +167,20 @@ class QuizGame {
     }
 
     parseColloData(text) {
+        // Format: Actual | Misheard | Note
         const lines = text.split('\n').filter(line => line.trim().length > 0);
         return lines.map(line => {
-            const content = line.replace(/^\d+\.\s*/, '');
-            const parts = content.split(':');
+            if (line.trim().startsWith('//')) return null; // comment support
+            const parts = line.split('|');
+            if (parts.length < 2) return null; // basic validation
+
             return {
-                original: parts[0]?.trim() || content,
-                meaning: parts[1]?.trim() || '',
-                full: line,
-                // Simple auto-tagging
-                principle: content.includes('+') ? "[원칙 (2) 문법]" : "[원칙 (3) 콜로케이션]"
+                actual: parts[0].trim(),
+                misheard: parts[1].trim(),
+                note: parts[2] ? parts[2].trim() : '',
+                full: line
             };
-        });
-    }
-
-    bindEvents() {
-        // Start
-        this.ui.btnStart.addEventListener('click', () => this.startGame(false));
-        // Review Start
-        if (this.ui.btnReview) {
-            this.ui.btnReview.addEventListener('click', () => this.startGame(true));
-        }
-
-        // Restart
-        this.ui.btnRestart.addEventListener('click', () => {
-            // Reset everything including review button check
-            this.checkReviewAvailability();
-            this.switchView('start');
-        });
-
-        // Stop
-        this.ui.btnStop.addEventListener('click', () => {
-            if (confirm("정말 그만하시겠습니까? 현재까지의 결과로 성적표를 생성합니다.")) {
-                this.endGame();
-            }
-        });
-
-        // Answer Click
-        this.ui.actionButtons.forEach(btn => {
-            btn.addEventListener('click', (e) => {
-                const val = e.target.getAttribute('data-value') || e.target.parentElement.getAttribute('data-value');
-                this.handleAnswer(val);
-            });
-        });
-
-        // Next Question
-        this.ui.btnNext.addEventListener('click', () => this.forceNext());
-
-        // Focus Tracking
-        this.ui.container.addEventListener('click', () => {
-            requestActiveGame(this);
-        });
-
-        // Data Modal Events (Collo only)
-        // Data Modal Events (Existing Collo + New Vocab)
-        if (this.ui.btnData) {
-            this.ui.btnData.addEventListener('click', () => this.ui.modalData.classList.remove('hidden'));
-            this.ui.btnCancelData.addEventListener('click', () => this.ui.modalData.classList.add('hidden'));
-            this.ui.btnSaveData.addEventListener('click', () => {
-                const txt = this.ui.inputData.value;
-                let newItems = [];
-
-                if (this.type === 'collo') {
-                    newItems = this.parseColloData(txt);
-                } else {
-                    newItems = this.parseVocabData(txt);
-                }
-
-                if (newItems.length > 0) {
-                    this.saveUserAddedData(newItems);
-                    this.list = [...this.list, ...newItems];
-                    this.updateTotalCountUI(); // Update Stats
-                    alert(`${newItems.length} added!`);
-                    this.ui.modalData.classList.add('hidden');
-                    this.ui.inputData.value = "";
-                } else {
-                    alert("데이터 파싱 실패: 올바른 형식이 아닙니다.");
-                }
-            });
-        }
-
-        // View DB Events
-        if (this.ui.btnViewDB) {
-            this.ui.btnViewDB.addEventListener('click', () => this.openDatabase(1));
-            this.ui.btnCloseDB.addEventListener('click', () => this.ui.modalDB.classList.add('hidden'));
-
-            // Pagination Events
-            if (this.ui.btnDBPrev) {
-                this.ui.btnDBPrev.addEventListener('click', () => {
-                    const totalPages = Math.ceil(this.list.length / this.dbItemsPerPage) || 1;
-                    if (this.dbCurrentPage > 1) this.openDatabase(this.dbCurrentPage - 1);
-                });
-            }
-            if (this.ui.btnDBNext) {
-                this.ui.btnDBNext.addEventListener('click', () => {
-                    const totalPages = Math.ceil(this.list.length / this.dbItemsPerPage) || 1;
-                    if (this.dbCurrentPage < totalPages) this.openDatabase(this.dbCurrentPage + 1);
-                });
-            }
-        }
+        }).filter(item => item !== null);
     }
 
     parseVocabData(text) {
@@ -279,6 +208,99 @@ class QuizGame {
         }).filter(item => item !== null);
     }
 
+    bindEvents() {
+        // Start
+        this.ui.btnStart.addEventListener('click', () => this.startGame(false));
+
+        // Review Start
+        if (this.ui.btnReview) {
+            this.ui.btnReview.addEventListener('click', () => this.startGame(true));
+        }
+
+        // Restart
+        this.ui.btnRestart.addEventListener('click', () => {
+            this.checkReviewAvailability();
+            this.switchView('start');
+        });
+
+        // Stop
+        this.ui.btnStop.addEventListener('click', () => {
+            if (confirm("정말 그만하시겠습니까? 현재까지의 결과를 확인합니다.")) {
+                this.endGame();
+            }
+        });
+
+        // Answer Click (Vocab Only)
+        this.ui.actionButtons.forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                const val = e.target.getAttribute('data-value') || e.target.parentElement.getAttribute('data-value');
+                this.handleAnswer(val);
+            });
+        });
+
+        // Next Button (Collo Only)
+        if (this.ui.btnNextStep) {
+            this.ui.btnNextStep.addEventListener('click', () => {
+                this.forceNext();
+            });
+        }
+
+        // Feedback Next (Vocab Only)
+        if (this.ui.btnNext) {
+            this.ui.btnNext.addEventListener('click', () => this.forceNext());
+        }
+
+        // Focus Tracking
+        this.ui.container.addEventListener('click', () => {
+            requestActiveGame(this);
+        });
+
+        // Data Modal
+        if (this.ui.btnData) {
+            this.ui.btnData.addEventListener('click', () => this.ui.modalData.classList.remove('hidden'));
+            this.ui.btnCancelData.addEventListener('click', () => this.ui.modalData.classList.add('hidden'));
+            this.ui.btnSaveData.addEventListener('click', () => {
+                const txt = this.ui.inputData.value;
+                let newItems = [];
+
+                if (this.type === 'collo') {
+                    newItems = this.parseColloData(txt);
+                } else {
+                    newItems = this.parseVocabData(txt);
+                }
+
+                if (newItems.length > 0) {
+                    this.saveUserAddedData(newItems);
+                    this.list = [...this.list, ...newItems];
+                    this.updateTotalCountUI();
+                    alert(`${newItems.length} added!`);
+                    this.ui.modalData.classList.add('hidden');
+                    this.ui.inputData.value = "";
+                } else {
+                    alert("데이터 파싱 실패: 형식을 확인해주세요.");
+                }
+            });
+        }
+
+        // DB View
+        if (this.ui.btnViewDB) {
+            this.ui.btnViewDB.addEventListener('click', () => this.openDatabase(1));
+            this.ui.btnCloseDB.addEventListener('click', () => this.ui.modalDB.classList.add('hidden'));
+
+            if (this.ui.btnDBPrev) {
+                this.ui.btnDBPrev.addEventListener('click', () => {
+                    if (this.dbCurrentPage > 1) this.openDatabase(this.dbCurrentPage - 1);
+                });
+            }
+            if (this.ui.btnDBNext) {
+                this.ui.btnDBNext.addEventListener('click', () => {
+                    const totalPages = Math.ceil(this.list.length / this.dbItemsPerPage) || 1;
+                    if (this.dbCurrentPage < totalPages) this.openDatabase(this.dbCurrentPage + 1);
+                });
+            }
+        }
+    }
+
     openDatabase(page = 1) {
         this.dbCurrentPage = page;
         this.ui.dbList.innerHTML = '';
@@ -288,7 +310,7 @@ class QuizGame {
         const totalPages = Math.ceil(totalItems / this.dbItemsPerPage) || 1;
 
         if (this.dbCurrentPage < 1) this.dbCurrentPage = 1;
-        if (this.dbCurrentPage > totalPages) this.dbCurrentPage = totalPages;
+        if (this.dbCurrentPage > totalPages && totalPages > 0) this.dbCurrentPage = totalPages;
 
         const start = (this.dbCurrentPage - 1) * this.dbItemsPerPage;
         const end = start + this.dbItemsPerPage;
@@ -301,15 +323,15 @@ class QuizGame {
                 const realIndex = start + index;
                 const li = document.createElement('li');
                 if (this.type === 'collo') {
+                    // LC Memo DB View
                     li.innerHTML = `
-                        <strong>${realIndex + 1}. ${item.original}</strong>
-                        <div class="meta">
-                            <span class="tag">${item.principle || 'General'}</span>
-                            <span>Meaning: ${item.meaning}</span>
-                        </div>
+                        <div class="db-item-header"><strong>#${realIndex + 1}</strong></div>
+                        <div style="color:#4ade80;">Actual: ${item.actual}</div>
+                        <div style="color:#f87171;">Misheard: ${item.misheard}</div>
+                        <div style="font-size:0.85rem; color:#cbd5e1; margin-top:4px;">Note: ${item.note}</div>
                     `;
                 } else {
-                    // Vocab
+                    // Vocab Query DB View
                     li.innerHTML = `
                         <strong>${realIndex + 1}. ${item.word}</strong>
                         <div class="meta">
@@ -325,7 +347,6 @@ class QuizGame {
             });
         }
 
-        // Update Pagination Controls
         if (this.ui.dbPageInfo) {
             this.ui.dbPageInfo.innerText = `${this.dbCurrentPage} / ${totalPages}`;
             this.ui.btnDBPrev.disabled = (this.dbCurrentPage <= 1);
@@ -338,8 +359,6 @@ class QuizGame {
     startGame(isReview) {
         requestActiveGame(this);
         this.isReviewMode = isReview;
-
-        // Reset State
         this.currentIndex = 0;
         this.score = { correct: 0, wrong: 0, wrongItems: [] };
         this.isWaiting = false;
@@ -350,18 +369,20 @@ class QuizGame {
         if (isReview) {
             pool = this.loadWrongAnswers();
             if (pool.length === 0) {
-                alert("복습할 오답이 없습니다!");
+                alert("복습할 항목이 없습니다.");
                 return;
             }
         } else {
             pool = this.list;
             if (pool.length === 0) {
-                alert("데이터가 없습니다.");
+                alert("데이터가 없습니다. 데이터를 추가해주세요!");
                 return;
             }
         }
 
-        // Only generate up to maxQuestions or pool size
+        // For Collo, we just iterate through the list (shuffled or not). 
+        // Let's shuffle for variety, or keep order? User said "Memo Pad", usually implies order isn't critical but random is good for practice.
+        // Let's shuffle.
         this.questions = this.generateQuestions(Math.min(this.maxQuestions, pool.length), pool);
 
         this.switchView('quiz');
@@ -375,24 +396,16 @@ class QuizGame {
         return stored ? JSON.parse(stored) : [];
     }
 
-    saveWrongInfo(wrongItemsList) {
-        if (!wrongItemsList || wrongItemsList.length === 0) return;
-        const key = `personal-toeic_wrong_${this.type}`;
-        const current = this.loadWrongAnswers();
-
-        const map = new Map();
-        // Handle both collo (original string) and vocab (word string) as key
-        // We will use a composite key or just the 'original' / 'word' property
-        current.forEach(item => map.set(item.word || item.original, item));
-        wrongItemsList.forEach(item => map.set(item.word || item.original, item));
-
-        const merged = Array.from(map.values());
-        localStorage.setItem(key, JSON.stringify(merged));
-        this.checkReviewAvailability();
-    }
-
     checkReviewAvailability() {
         if (!this.ui.btnReview) return;
+        // Collo area doesn't really have "Wrong" answers anymore, so maybe hide review button?
+        // But if user wants to keep it for old data or if we implement "Mark as Hard", we could use it.
+        // For now, if Collo, we might optimize out.
+        if (this.type === 'collo') {
+            this.ui.btnReview.classList.add('hidden');
+            return;
+        }
+
         const wrongs = this.loadWrongAnswers();
         if (wrongs.length > 0) {
             this.ui.btnReview.classList.remove('hidden');
@@ -409,85 +422,31 @@ class QuizGame {
             count = Math.min(count, pool.length);
         }
 
-        const distractorPrepositions = ['to', 'on', 'with', 'for', 'of', 'in', 'at', 'by'];
-
         for (let i = 0; i < count; i++) {
-            const item = pool[i % pool.length];
-            // If item has explicit answer (Vocab X cases), respect it.
-            // Otherwise random generate False (Collo)
-            let isTrue = true;
-            if (item.answer) {
-                isTrue = (item.answer === 'O');
-            } else {
-                isTrue = Math.random() > 0.5;
-            }
-
-            let qText, explanation;
+            const item = pool[i];
 
             if (this.type === 'collo') {
-                const principle = item.principle || "[원칙 (3) 콜로케이션]";
-                if (isTrue) {
-                    qText = `"${item.original}" means "${item.meaning}".`;
-                    if (item.original.includes('+')) {
-                        qText = `Structure Check: Is "${item.original}" correct?`;
-                    }
-                    explanation = `${principle} ✅ Correct! "${item.original}" is the standard form.`;
-                } else {
-                    // False Generation Logic
-                    if (item.original.includes('+')) {
-                        const words = item.original.split(' ');
-                        let swapped = false;
-                        const newWords = words.map(w => {
-                            if (distractorPrepositions.includes(w) && !swapped) {
-                                const validDis = distractorPrepositions.filter(p => p !== w);
-                                if (validDis.length > 0) {
-                                    swapped = true;
-                                    return validDis[Math.floor(Math.random() * validDis.length)];
-                                }
-                            }
-                            return w;
-                        });
-
-                        if (swapped) {
-                            qText = `Structure Check: Is "${newWords.join(' ')}" correct?`;
-                        } else {
-                            const other = pool[(i + 1) % pool.length];
-                            qText = `Meaning Check: "${item.original}" means "${other.meaning}"?`;
-                        }
-                    } else {
-                        const other = pool[(i + 1) % pool.length];
-                        qText = `Meaning Check: "${item.original}" means "${other.meaning}"?`;
-                    }
-                    explanation = `${principle} ❌ False. Correct: "${item.original}" (${item.meaning}).`;
-                }
+                // LC Memo: Just the item.
+                result.push({
+                    type: 'memo',
+                    original: item
+                });
             } else {
-                // VOCAB logic
-                // For Vocab, the item object already has 'sentence', 'word', 'explanation' (with principle included)
-                // If the item is marked as Answer X in DB, we display it as such.
-                // If it is Answer O, we display O.
-
-                // NOTE: The 'isTrue' variable above was set based on item.answer.
-                // Use the sentence and word from data.
-
-                // If we want to dynamically generate False from True items, we can.
-                // But the user provided "X" items specifically.
-                // Let's assume the DB controls the correctness for Vocab mostly.
-                // However, for variety, we can occasionally swap a True item to False if we run out of X items?
-                // For now, let's strictly follow the DB 'answer' if present.
-
-                qText = `Sent: "${item.sentence}"\nWord: [ ${item.word} ]\nIs this fitting?`;
-
-                // Since explanation in JSON is the "Correct Explanation", we might need to prefix Outcome.
+                // Vocab: O/X Quiz
+                let isTrue = (item.answer === 'O');
+                // Could act random, but sticking to data
+                const qText = `Sent: "${item.sentence}"\nWord: [ ${item.word} ]\nIs this fitting?`;
                 const outcome = isTrue ? "✅ Yes!" : "❌ No.";
-                explanation = `${outcome} ${item.explanation}`;
-            }
+                const explanation = `${outcome} ${item.explanation}`;
 
-            result.push({
-                text: qText + "\n(O / X)",
-                correctAnswer: isTrue ? 'O' : 'X',
-                explanation: explanation,
-                original: item
-            });
+                result.push({
+                    type: 'quiz',
+                    text: qText + "\n(O / X)",
+                    correctAnswer: isTrue ? 'O' : 'X',
+                    explanation: explanation,
+                    original: item
+                });
+            }
         }
         return result;
     }
@@ -498,19 +457,48 @@ class QuizGame {
             return;
         }
         const q = this.questions[this.currentIndex];
-        this.ui.questionText.innerText = q.text;
 
-        this.isWaiting = false;
-        this.ui.actionButtons.forEach(btn => btn.disabled = false);
-        this.ui.modalFeedback.classList.add('hidden');
+        if (this.type === 'collo') {
+            // Render Memo
+            if (this.ui.contentArea) {
+                this.ui.contentArea.innerHTML = `
+                    <div class="memo-field">
+                        <span class="label">Actual Sound</span>
+                        <div class="value actual">${q.original.actual}</div>
+                    </div>
+                    <div class="memo-field">
+                        <span class="label">Misheard As</span>
+                        <div class="value misheard">${q.original.misheard}</div>
+                    </div>
+                    <div class="memo-field note">
+                        <span class="label">Note</span>
+                        <div class="value">${q.original.note}</div>
+                    </div>
+                `;
+            }
+            // Show Next Button, Hide O/X (controlled in CSS/HTML structure mainly, but let's ensure)
+            // Note: In new HTML, O/X buttons are replaced by Next button for Collo.
+        } else {
+            // Render Vocab Quiz
+            if (this.ui.questionText) {
+                this.ui.questionText.innerText = q.text;
+            }
+            this.ui.actionButtons.forEach(btn => btn.disabled = false);
+            this.ui.modalFeedback.classList.add('hidden');
+        }
 
         this.updateProgress();
     }
 
     handleAnswer(userAns) {
+        if (this.type === 'collo') {
+            // Collo has no "answer", just Next.
+            this.forceNext();
+            return;
+        }
+
         if (this.isWaiting) return;
         this.isWaiting = true;
-
         this.ui.actionButtons.forEach(btn => btn.disabled = true);
 
         const q = this.questions[this.currentIndex];
@@ -530,6 +518,7 @@ class QuizGame {
 
         this.ui.modalFeedback.classList.remove('hidden');
 
+        // Auto advance after short delay
         this.timer = setTimeout(() => {
             this.forceNext();
         }, 1500);
@@ -538,7 +527,7 @@ class QuizGame {
     forceNext() {
         if (this.timer) clearTimeout(this.timer);
         this.timer = null;
-        this.ui.modalFeedback.classList.add('hidden');
+        if (this.ui.modalFeedback) this.ui.modalFeedback.classList.add('hidden');
         this.currentIndex++;
         this.showQuestion();
     }
@@ -547,11 +536,16 @@ class QuizGame {
         if (this.ui.viewQuiz.classList.contains('hidden')) return;
 
         if (input === 'NEXT') {
-            if (this.isWaiting) {
+            if (this.type === 'collo') {
                 this.forceNext();
+            } else {
+                if (this.isWaiting) {
+                    this.forceNext();
+                }
             }
         } else {
-            if (!this.isWaiting) {
+            // O/X Inputs
+            if (this.type === 'vocab' && !this.isWaiting) {
                 this.handleAnswer(input);
             }
         }
@@ -560,64 +554,58 @@ class QuizGame {
     endGame() {
         this.switchView('report');
 
-        // Logic Check: 'currentIndex' is the number of questions ATTEMPTED/FINISHED if called from showQuestion overflow
-        // If called from Early Exit, currentIndex is the one we were staring at (not finished).
-        // BUT score.correct + score.wrong equals the number of questions actually answered.
-
-        const totalAnswered = this.score.correct + this.score.wrong;
-        const pct = totalAnswered === 0 ? 0 : Math.round((this.score.correct / totalAnswered) * 100);
-
-        this.ui.scoreText.innerText = `${pct}%`;
-
-        // Circular Chart Animation (Dashoffset)
-        const radius = 15.9155;
-        const circumference = 2 * Math.PI * radius; // ~100
-        const offset = 100 - pct; // 100 means empty, 0 means full
-
-        // Force reflow for animation restart if needed, or just set it
-        this.ui.circlePath.style.transition = 'none';
-        this.ui.circlePath.setAttribute('stroke-dasharray', `100 100`);
-        this.ui.circlePath.setAttribute('stroke-dashoffset', '100'); // start empty
-
-        setTimeout(() => {
-            this.ui.circlePath.style.transition = 'stroke-dashoffset 1s ease-out';
-            this.ui.circlePath.setAttribute('stroke-dashoffset', offset.toString());
-        }, 50);
-
-
-        this.ui.correctCount.innerText = `${this.score.correct}`;
-        this.ui.wrongCount.innerText = `${this.score.wrong}`;
-
-        this.ui.wrongList.innerHTML = '';
-        if (this.score.wrongItems.length > 0) {
-            this.ui.wrongSection.classList.remove('hidden');
-            this.score.wrongItems.forEach(item => {
-                const li = document.createElement('li');
-                // Handle polymorphism: Collo has 'original/meaning', Vocab has 'word/explanation'
-                const mainText = item.original || item.sentence;
-                let subText = item.meaning ? item.meaning : `${item.word} (${item.answer || 'O'}) - ${item.explanation}`;
-
-                // For Vocab, maybe just show Word + Explanation
-                if (this.type === 'vocab') {
-                    li.innerHTML = `<strong>${item.word}</strong>: ${item.explanation} <br><small>${item.sentence}</small>`;
-                } else {
-                    li.innerHTML = `<strong>${item.original}</strong> : ${item.meaning}`;
-                }
-
-                this.ui.wrongList.appendChild(li);
-            });
-
-            this.saveWrongInfo(this.score.wrongItems);
-
+        if (this.type === 'collo') {
+            // LC Memo Report: No score
+            if (this.ui.scoreSection) this.ui.scoreSection.classList.add('hidden');
+            // Maybe show a list of what we recalled? Or just 'Done'.
+            // For now, generic done message is fine.
         } else {
-            this.ui.wrongSection.classList.add('hidden');
+            // Vocab Report: Show Score
+            if (this.ui.scoreSection) this.ui.scoreSection.classList.remove('hidden');
+
+            const totalAnswered = this.score.correct + this.score.wrong;
+            const pct = totalAnswered === 0 ? 0 : Math.round((this.score.correct / totalAnswered) * 100);
+
+            this.ui.scoreText.innerText = `${pct}%`;
+
+            const radius = 15.9155;
+            const offset = 100 - pct;
+
+            this.ui.circlePath.style.transition = 'none';
+            this.ui.circlePath.setAttribute('stroke-dashoffset', '100');
+
+            setTimeout(() => {
+                this.ui.circlePath.style.transition = 'stroke-dashoffset 1s ease-out';
+                this.ui.circlePath.setAttribute('stroke-dashoffset', offset.toString());
+            }, 50);
+
+            this.ui.correctCount.innerText = `${this.score.correct}`;
+            this.ui.wrongCount.innerText = `${this.score.wrong}`;
+
+            this.ui.wrongList.innerHTML = '';
+            if (this.score.wrongItems.length > 0) {
+                this.ui.wrongSection.classList.remove('hidden');
+                this.score.wrongItems.forEach(item => {
+                    const li = document.createElement('li');
+                    li.innerHTML = `<strong>${item.word}</strong>: ${item.explanation} <br><small>${item.sentence}</small>`;
+                    this.ui.wrongList.appendChild(li);
+                });
+                // Save wrongs logic if needed (borrowed from previous implementation)
+                const key = `personal-toeic_wrong_${this.type}`;
+                // Simplified overwrite for now
+                localStorage.setItem(key, JSON.stringify(this.score.wrongItems));
+
+            } else {
+                this.ui.wrongSection.classList.add('hidden');
+            }
         }
     }
 
     updateProgress() {
         const txt = `${this.currentIndex + 1} / ${this.questions.length}`;
-        this.ui.progressText.innerText = txt;
         const percent = ((this.currentIndex) / this.questions.length) * 100;
+
+        this.ui.progressText.innerText = txt;
         this.ui.progressFill.style.width = `${percent}%`;
     }
 
@@ -654,7 +642,6 @@ function requestActiveGame(game) {
 document.addEventListener('keydown', (e) => {
     if (!activeGame) return;
 
-    // Fix Bug 1: Prevent shortcuts when typing in Input/Textarea
     if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
 
     const key = e.key.toUpperCase();
@@ -670,14 +657,12 @@ document.addEventListener('keydown', (e) => {
 });
 
 document.addEventListener('DOMContentLoaded', () => {
-    // Instance 1: Collocation Quiz
+    // Instance 1: LC Misheard Memo (Left)
     const colloQuiz = new QuizGame('collo-', 'collo', INITIAL_DATA_RAW);
 
-    // Instance 2: Vocab Quiz
+    // Instance 2: Vocab Quiz (Right)
     const vocabQuiz = new QuizGame('vocab-', 'vocab', VOCAB_QUIZ_DATA);
 
     // Default focus to left
     requestActiveGame(colloQuiz);
 });
-
-
