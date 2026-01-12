@@ -170,7 +170,22 @@ const VOCAB_QUIZ_DATA = [
     { sentence: "We celebrated the _______ of the new law.", word: "enactment", answer: "O", explanation: "[원칙 (1) 문맥] 새로운 법의 '제정/입법'을 축하했다는 의미입니다." },
     { sentence: "He is an expert _______ computer science.", word: "when it comes to", answer: "O", explanation: "[원칙 (3) 콜로케이션] '~~에 관해서라면'이라는 자연스러운 구어체/관용구입니다." },
     { sentence: "Residents signed a _______ against the construction.", word: "petition", answer: "O", explanation: "[원칙 (1) 문맥] 건설 반대 '청원서/탄원서'에 서명했다는 의미입니다." },
-    { sentence: "He has a _______ reason for being absent.", word: "legitimate", answer: "O", explanation: "[원칙 (1) 문맥] 결석에 대한 '합당한/정당한' 이유가 있다는 의미입니다." }
+    { sentence: "He has a _______ reason for being absent.", word: "legitimate", answer: "O", explanation: "[원칙 (1) 문맥] 결석에 대한 '합당한/정당한' 이유가 있다는 의미입니다." },
+    // New 14 Items (User Request)
+    { sentence: "Quality control requires us to _______ random products from the line.", word: "sample", answer: "O", explanation: "[원칙 (1) 문맥] 품질 관리를 위해 제품을 '시험(sample)'해본다는 동사 뜻을 주의하세요." },
+    { sentence: "Protective gear is _______ necessary in this zone.", word: "absolutely", answer: "O", explanation: "[원칙 (1) 문맥] '완전히 필수적인(absolutely necessary)' 처럼 형용사를 강조할 때 자주 쓰입니다." },
+    { sentence: "A good manager knows how to _______ tasks to the team.", word: "delegate", answer: "O", explanation: "[원칙 (2) 문법] 타동사로서 권한을 '위임하다'는 뜻과, 가산명사로 '대표단'이라는 뜻이 모두 중요합니다." },
+    { sentence: "The audience listened _______ to the speaker.", word: "attentively", answer: "O", explanation: "[원칙 (2) 문법] 동사 listen 등을 뒤에서 수식하여 '주의 깊게 듣다'로 자주 출제됩니다." },
+    { sentence: "He _______ agreed to the proposal.", word: "reluctantly", answer: "O", explanation: "[원칙 (1) 문맥] 하기 싫은 일을 어쩔 수 없이 할 때의 논리 구조를 파악하세요." },
+    { sentence: "Please _______ yourself with the manual.", word: "acquaint", answer: "O", explanation: "[원칙 (3) 콜로케이션] 'acquaint A with B' (A에게 B를 숙지시키다) 형태로 전치사 with를 선호합니다." },
+    { sentence: "I need _______ paper to write a note.", word: "a sheet of", answer: "O", explanation: "[원칙 (3) 콜로케이션] 종이 한 장을 셀 때 쓰는 수량 표현입니다." },
+    { sentence: "He handed me his _______.", word: "business card", answer: "O", explanation: "[원칙 (1) 문맥] 네트워킹 상황이나 사무실 사진 묘사에서 단골로 등장합니다." },
+    { sentence: "We worked late _______ finish the project.", word: "in order to", answer: "O", explanation: "[원칙 (2) 문법] 목적을 나타내는 표현으로 뒤에 '동사원형'이 와야 합니다." },
+    { sentence: "The printer has a _______.", word: "paper jam", answer: "O", explanation: "[원칙 (1) 문맥] 복사기나 프린터 고장 상황(Troubleshooting) 지문의 핵심 키워드입니다." },
+    { sentence: "She is busy with administrative _______.", word: "paperwork", answer: "O", explanation: "[원칙 (1) 문맥] 불가산 명사로 쓰이며, 일상적인 행정 업무를 포괄합니다." },
+    { sentence: "My desk is behind that _______.", word: "partition", answer: "O", explanation: "[원칙 (1) 문맥] 파트 1 사진 묘사에서 책상 사이의 '칸막이'를 설명할 때 나옵니다." },
+    { sentence: "Traffic is terrible during _______.", word: "rush hour", answer: "O", explanation: "[원칙 (1) 문맥] 교통 체증(traffic congestion) 지문의 시간적 배경으로 자주 등장합니다." },
+    { sentence: "Do not place hot items directly on the _______.", word: "table top", answer: "O", explanation: "[원칙 (1) 문맥] 물건이 탁자 위에 놓여 있는 상태를 묘사할 때 쓰입니다." }
 ];
 
 /**
@@ -283,7 +298,7 @@ class QuizGame {
 
         const userData = this.loadUserAddedData();
         this.list = [...baseData, ...userData];
-        
+
         this.updateTotalCountUI();
     }
 
@@ -303,7 +318,7 @@ class QuizGame {
 
     updateTotalCountUI() {
         if (this.ui.totalItemsCount) {
-             this.ui.totalItemsCount.innerText = this.list.length;
+            this.ui.totalItemsCount.innerText = this.list.length;
         }
     }
 
@@ -808,7 +823,7 @@ function requestActiveGame(game) {
 
 document.addEventListener('keydown', (e) => {
     if (!activeGame) return;
-    
+
     // Fix Bug 1: Prevent shortcuts when typing in Input/Textarea
     if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
 
