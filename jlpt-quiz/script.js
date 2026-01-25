@@ -1,10 +1,35 @@
 // JLPT Data (Initial Sample)
 const JLPT_DATA = [
-    { word: "勉強", reading: "べんきょう", meaning: "공부", example: "毎日勉強します。" },
-    { word: "食べる", reading: "たべる", meaning: "먹다", example: "ご飯を食べる。" },
-    { word: "忙しい", reading: "いそがしい", meaning: "바쁘다", example: "今日は忙しいです。" },
-    { word: "綺麗", reading: "きれい", meaning: "깨끗하다, 예쁘다", example: "部屋が綺麗です。" },
-    { word: "読む", reading: "よむ", meaning: "읽다", example: "本を読む。" }
+    { word: "騒然とする", reading: "そうぜんとする", meaning: "소연해지다 (떠들썩하다)", example: "" },
+    { word: "秩序", reading: "ちつじょ", meaning: "질서", example: "" },
+    { word: "朗らかな", reading: "ほがらかな", meaning: "명랑한, 쾌활한", example: "" },
+    { word: "軌跡", reading: "きせき", meaning: "궤적", example: "" },
+    { word: "矛盾", reading: "むじゅん", meaning: "모순", example: "" },
+    { word: "賄う", reading: "まかなう", meaning: "조달하다, 마련하다", example: "" },
+    { word: "諭す", reading: "さとす", meaning: "타이르다", example: "" },
+    { word: "潜伏", reading: "せんぷく", meaning: "잠복", example: "" },
+    { word: "振興", reading: "しんこう", meaning: "진흥", example: "" },
+    { word: "偏り", reading: "かたより", meaning: "치우침, 편향", example: "" },
+    { word: "誇張", reading: "こちょう", meaning: "과장", example: "" },
+    { word: "軽率な", reading: "けいそつな", meaning: "경솔한", example: "" },
+    { word: "勇敢に", reading: "ゆうかんに", meaning: "용감하게", example: "" },
+    { word: "慕う", reading: "したう", meaning: "그리워하다, 우러르다", example: "" },
+    { word: "沈下", reading: "ちんか", meaning: "침하", example: "" },
+    { word: "監督", reading: "かんとく", meaning: "감독", example: "" },
+    { word: "透ける", reading: "すける", meaning: "비쳐 보이다", example: "" },
+    { word: "臨む", reading: "のぞむ", meaning: "임하다, 마주하다", example: "" },
+    { word: "忠告", reading: "ちゅうこく", meaning: "충고", example: "" },
+    { word: "施錠", reading: "せじょう", meaning: "시정 (문잠금)", example: "" },
+    { word: "阻まれる", reading: "はばまれる", meaning: "저지당하다, 가로막히다", example: "" },
+    { word: "派生", reading: "はせい", meaning: "파생", example: "" },
+    { word: "恩恵", reading: "おんけい", meaning: "은혜", example: "" },
+    { word: "如実に", reading: "にょじつに", meaning: "여실히 (사실과 똑같이)", example: "" },
+    { word: "錯覚", reading: "さっかく", meaning: "착각", example: "" },
+    { word: "枯渇", reading: "こかつ", meaning: "고갈", example: "" },
+    { word: "克明に", reading: "こくめいに", meaning: "극명하게 (자세히)", example: "" },
+    { word: "尊い", reading: "とうとい", meaning: "소중하다, 고귀하다", example: "" },
+    { word: "慰める", reading: "なぐさめる", meaning: "위로하다", example: "" },
+    { word: "緊迫した", reading: "きんぱくした", meaning: "긴박한", example: "" }
 ];
 
 // App State
