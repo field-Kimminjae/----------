@@ -1,16 +1,25 @@
 :root {
+    /* Shared Colors */
     --bg-gradient: linear-gradient(135deg, #0f172a 0%, #1e1b4b 100%);
     --card-bg: rgba(255, 255, 255, 0.05);
     --card-border: 1px solid rgba(255, 255, 255, 0.1);
     --text-main: #f8fafc;
     --text-muted: #94a3b8;
+    --glass-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+    --font-heading: 'Inter', sans-serif;
+    --font-body: 'Noto Sans KR', sans-serif;
+
+    /* Left Theme (Blue - Default) */
     --accent: #38bdf8;
     --accent-hover: #0ea5e9;
     --correct: #4ade80;
     --wrong: #f87171;
-    --glass-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
-    --font-heading: 'Inter', sans-serif;
-    --font-body: 'Noto Sans KR', sans-serif;
+
+    /* Right Theme (Purple) */
+    --accent-purple: #a855f7;
+    /* Purple-500 */
+    --accent-purple-hover: #9333ea;
+    /* Purple-600 */
 }
 
 * {
@@ -31,18 +40,23 @@ body {
     padding: 20px;
 }
 
+/* --- DUAL LAYOUT --- */
 .main-layout {
     display: flex;
+    flex-direction: row;
+    /* Side by side on desktop */
     justify-content: center;
+    gap: 20px;
     width: 100%;
-    max-width: 600px;
-    /* Single column layout for JLPT */
+    max-width: 1200px;
+    /* Wider for dual */
     height: 100%;
     max-height: 850px;
 }
 
 .app-container {
     flex: 1;
+    /* Split 50/50 */
     min-width: 320px;
     height: 100%;
     background: rgba(15, 23, 42, 0.6);
@@ -56,6 +70,60 @@ body {
     box-shadow: var(--glass-shadow);
 }
 
+/* --- THEMES --- */
+/* Left Panel (Blue) uses default vars, but we can enforce if needed */
+.theme-blue {
+    border-top: 4px solid var(--accent);
+}
+
+/* Right Panel (Purple) - Scope CSS variables locally */
+.theme-purple {
+    border-top: 4px solid var(--accent-purple);
+    --accent: var(--accent-purple);
+    --accent-hover: var(--accent-purple-hover);
+}
+
+.theme-purple-content {
+    /* For modals inside generic container */
+    --accent: var(--accent-purple);
+    --accent-hover: var(--accent-purple-hover);
+}
+
+/* --- Responsive (Mobile) --- */
+@media (max-width: 768px) {
+    .main-layout {
+        flex-direction: column;
+        /* Stack vertically */
+        height: 100vh;
+        max-height: none;
+        padding: 0;
+        gap: 0;
+        overflow-y: auto;
+        /* Allow body scrolling */
+        display: block;
+        /* Let normal block flow wrap containers */
+    }
+
+    body {
+        padding: 0;
+        display: block;
+        overflow-y: auto;
+    }
+
+    .app-container {
+        width: 100%;
+        height: auto;
+        /* Adjusted for stacking */
+        min-height: 600px;
+        /* Minimum height per quiz */
+        border-radius: 0;
+        border: none;
+        border-bottom: 5px solid #000;
+        /* Separator */
+    }
+}
+
+/* --- COMMON UI --- */
 header {
     padding: 20px;
     display: flex;
@@ -81,7 +149,6 @@ header {
     align-items: center;
     transition: opacity 0.3s ease;
     overflow-y: auto;
-    /* Allow scrolling if content is tall */
 }
 
 .hidden {
@@ -157,8 +224,9 @@ button {
 }
 
 .btn-primary:hover {
+    filter: brightness(1.1);
     transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(56, 189, 248, 0.4);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
 }
 
 .btn-secondary {
@@ -192,11 +260,9 @@ button {
 
 .btn-choice {
     background: rgba(255, 255, 255, 0.08);
-    /* Slightly lighter than card */
     border: 1px solid rgba(255, 255, 255, 0.1);
     color: var(--text-main);
     padding: 15px 20px;
-    /* More padding */
     border-radius: 16px;
     text-align: left;
     font-size: 1.05rem;
@@ -212,10 +278,6 @@ button {
     background: rgba(255, 255, 255, 0.15);
     border-color: var(--accent-hover);
     transform: translateY(-2px);
-}
-
-.btn-choice:active {
-    transform: translateY(0);
 }
 
 .choice-label {
@@ -235,17 +297,6 @@ button {
 
 .choice-text {
     flex: 1;
-}
-
-/* Correct/Wrong States for choices (optional, if we show immediate feedback on buttons) */
-.btn-choice.correct {
-    background: rgba(74, 222, 128, 0.2);
-    border-color: var(--correct);
-}
-
-.btn-choice.wrong {
-    background: rgba(248, 113, 113, 0.2);
-    border-color: var(--wrong);
 }
 
 /* Report Chart */
@@ -299,12 +350,14 @@ button {
     width: 100%;
 }
 
-#wrong-items-list {
+#left-wrong-items-list,
+#right-wrong-items-list {
     list-style: none;
     padding: 0;
 }
 
-#wrong-items-list li {
+#left-wrong-items-list li,
+#right-wrong-items-list li {
     padding: 10px;
     border-bottom: 1px solid rgba(255, 255, 255, 0.1);
     font-size: 0.95rem;
@@ -354,25 +407,5 @@ button {
     100% {
         transform: scale(1);
         opacity: 1;
-    }
-}
-
-@media (max-width: 600px) {
-    .main-layout {
-        padding: 0;
-        height: 100vh;
-        max-height: none;
-    }
-
-    .app-container {
-        border-radius: 0;
-        border: none;
-    }
-
-    header {
-        position: sticky;
-        top: 0;
-        background: rgba(15, 23, 42, 0.95);
-        z-index: 10;
     }
 }

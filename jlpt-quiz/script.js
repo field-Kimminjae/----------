@@ -1,70 +1,32 @@
-// JLPT Data Storage
-let JLPT_DATA = [];
-const QUIZ_SIZE = 20;
+// ------------------------------------------------------------------
+// Global Logic & Data Loading
+// ------------------------------------------------------------------
 
-// App State
-let quizQueue = [];
-let currentQuestionIndex = 0;
-let score = { correct: 0, wrong: 0 };
-let wrongAnswers = [];
+let basicData = [];
+let advancedData = [];
 
-// DB Viewer State
-let dbPage = 1;
+// Managers
+let leftQuiz = null;
+let rightQuiz = null;
+
 const ITEMS_PER_PAGE = 5;
 
-// DOM Elements
-const views = {
-    start: document.getElementById('view-start'),
-    quiz: document.getElementById('view-quiz'),
-    report: document.getElementById('view-report')
-};
-
-const els = {
-    totalDbCount: document.getElementById('total-db-count'),
-    btnStart: document.getElementById('btn-start'),
-    btnStop: document.getElementById('btn-stop'),
-    btnRestart: document.getElementById('btn-restart'),
-
-    // DB View
-    btnViewDb: document.getElementById('btn-view-db'),
-    dbModal: document.getElementById('db-modal'),
-    btnCloseDb: document.getElementById('btn-close-db'),
-    dbListContainer: document.getElementById('db-list-container'),
-    dbTotalCount: document.getElementById('db-total-count'),
-    btnPrevPage: document.getElementById('btn-prev-page'),
-    btnNextPage: document.getElementById('btn-next-page'),
-    pageIndicator: document.getElementById('page-indicator'),
-
-    // Quiz View
-    questionKanji: document.getElementById('question-kanji'),
-    optionsContainer: document.getElementById('options-container'),
-    progressContainer: document.getElementById('progress-container'),
-    progressText: document.getElementById('progress-text'),
-    progressFill: document.getElementById('progress-fill'),
-
-    // Report View
-    scoreText: document.getElementById('score-text'),
-    scoreCircle: document.getElementById('score-circle-path'),
-    correctCount: document.getElementById('correct-count'),
-    wrongCount: document.getElementById('wrong-count'),
-    wrongSection: document.getElementById('wrong-answers-section'),
-    wrongList: document.getElementById('wrong-items-list'),
-
-    // Feedback Modal
-    modal: document.getElementById('feedback-modal'),
-    modalIcon: document.getElementById('feedback-icon'),
-    modalTitle: document.getElementById('feedback-title'),
-    fbKanji: document.getElementById('fb-kanji'),
-    fbReading: document.getElementById('fb-reading'),
-    fbMeaning: document.getElementById('fb-meaning'),
-    fbExample: document.getElementById('fb-example'),
-    btnNext: document.getElementById('btn-next')
-};
-
-// Initialization
+// Init
 async function init() {
     await loadData();
-    setupEventListeners();
+
+    // Initialize Managers
+    leftQuiz = new QuizManager('left', basicData, {
+        highlightSynonyms: false,
+        themeColor: 'var(--accent)'
+    });
+
+    rightQuiz = new QuizManager('right', advancedData, {
+        highlightSynonyms: true,
+        themeColor: 'var(--accent-purple)'
+    });
+
+    console.log("Phase 3: Quiz Engines Initialized.");
 }
 
 async function loadData() {
@@ -80,265 +42,385 @@ async function loadData() {
 
 function parseData(text) {
     const lines = text.split('\n');
-    JLPT_DATA = [];
+    basicData = [];
+    advancedData = [];
 
     lines.forEach(line => {
         const parts = line.split('|').map(s => s.trim());
-        if (parts.length >= 3) {
-            JLPT_DATA.push({
-                word: parts[0],
-                reading: parts[1],
-                meaning: parts[2],
-                example: parts[3] || ""
-            });
+        if (parts.length < 3) return;
+
+        const item = {
+            word: parts[0],
+            reading: parts[1],
+            meaning: parts[2],
+            other: parts[3] || ""
+        };
+
+        // Classification: Presence of '≒' or '≈' goes to Advanced (Right)
+        if (item.meaning.includes('≒') || item.meaning.includes('≈')) {
+            advancedData.push(item);
+        } else {
+            basicData.push(item);
         }
     });
 
-    els.totalDbCount.textContent = JLPT_DATA.length;
-    els.dbTotalCount.textContent = JLPT_DATA.length;
+    // Initial Count UI
+    if (document.getElementById('left-total-db-count'))
+        document.getElementById('left-total-db-count').textContent = basicData.length;
+    if (document.getElementById('right-total-db-count'))
+        document.getElementById('right-total-db-count').textContent = advancedData.length;
 }
 
-function setupEventListeners() {
-    els.btnStart.addEventListener('click', startQuiz);
-    els.btnStop.addEventListener('click', () => finishQuiz(true));
-    els.btnRestart.addEventListener('click', () => location.reload());
-    els.btnNext.addEventListener('click', nextQuestion);
+// ------------------------------------------------------------------
+// QuizManager Class (Independent Engine)
+// ------------------------------------------------------------------
+class QuizManager {
+    constructor(panelPrefix, data, options = {}) {
+        this.prefix = panelPrefix;
+        this.data = data || [];
+        this.options = options; // { highlightSynonyms: boolean, themeColor: string }
 
-    // DB Modal
-    els.btnViewDb.addEventListener('click', openDbModal);
-    els.btnCloseDb.addEventListener('click', closeDbModal);
-    els.btnPrevPage.addEventListener('click', () => changeDbPage(-1));
-    els.btnNextPage.addEventListener('click', () => changeDbPage(1));
+        // State
+        this.quizQueue = [];
+        this.currentIndex = 0;
+        this.score = { correct: 0, wrong: 0 };
+        this.wrongAnswers = [];
+        this.dbPage = 1;
 
-    // Close modal on outside click
-    window.addEventListener('click', (e) => {
-        if (e.target === els.dbModal) closeDbModal();
-    });
-}
+        // Cache DOM Elements (using prefix)
+        this.els = {
+            viewStart: document.getElementById(`${this.prefix}-view-start`),
+            viewQuiz: document.getElementById(`${this.prefix}-view-quiz`),
+            viewReport: document.getElementById(`${this.prefix}-view-report`),
 
-// Data Utils
-function shuffleArray(array) {
-    for (let i = array.length - 1; i > 0; i--) {
-        const j = Math.floor(Math.random() * (i + 1));
-        [array[i], array[j]] = [array[j], array[i]];
-    }
-    return array;
-}
+            totalDbCount: document.getElementById(`${this.prefix}-total-db-count`),
 
-// DB Viewer Logic
-function openDbModal() {
-    dbPage = 1;
-    renderDbPage();
-    els.dbModal.classList.remove('hidden');
-}
+            btnStart: document.getElementById(`${this.prefix}-btn-start`),
+            btnStop: document.getElementById(`${this.prefix}-btn-stop`),
+            btnRestart: document.getElementById(`${this.prefix}-btn-restart`),
 
-function closeDbModal() {
-    els.dbModal.classList.add('hidden');
-}
+            // Quiz UI
+            questionArea: document.getElementById(`${this.prefix}-question-area`),
+            questionKanji: document.getElementById(`${this.prefix}-question-kanji`),
+            optionsContainer: document.getElementById(`${this.prefix}-options-container`),
 
-function changeDbPage(delta) {
-    const maxPage = Math.ceil(JLPT_DATA.length / ITEMS_PER_PAGE) || 1;
-    const newPage = dbPage + delta;
-    if (newPage >= 1 && newPage <= maxPage) {
-        dbPage = newPage;
-        renderDbPage();
-    }
-}
+            progressContainer: document.getElementById(`${this.prefix}-progress-container`),
+            progressText: document.getElementById(`${this.prefix}-progress-text`),
+            progressFill: document.getElementById(`${this.prefix}-progress-fill`),
 
-function renderDbPage() {
-    els.dbListContainer.innerHTML = '';
-    const startIdx = (dbPage - 1) * ITEMS_PER_PAGE;
-    const endIdx = startIdx + ITEMS_PER_PAGE;
-    const pageItems = JLPT_DATA.slice(startIdx, endIdx);
+            // Report UI
+            scoreText: document.getElementById(`${this.prefix}-score-text`),
+            scoreCircle: document.getElementById(`${this.prefix}-score-circle-path`),
+            correctCount: document.getElementById(`${this.prefix}-correct-count`),
+            wrongCount: document.getElementById(`${this.prefix}-wrong-count`),
+            wrongSection: document.getElementById(`${this.prefix}-wrong-answers-section`),
+            wrongList: document.getElementById(`${this.prefix}-wrong-items-list`),
 
-    pageItems.forEach((item, idx) => {
-        const div = document.createElement('div');
-        div.style.padding = "10px";
-        div.style.borderBottom = "1px solid rgba(255,255,255,0.1)";
-        div.innerHTML = `
-            <div style="font-size:1.2rem; font-weight:bold; color:var(--accent);">${startIdx + idx + 1}. ${item.word}</div>
-            <div style="font-size:0.9rem; color:#ccc;">${item.reading}</div>
-            <div style="margin-top:5px;">${item.meaning}</div>
-        `;
-        els.dbListContainer.appendChild(div);
-    });
+            // DB Modal UI
+            btnViewDb: document.getElementById(`${this.prefix}-btn-view-db`),
+            dbModal: document.getElementById(`${this.prefix}-db-modal`),
+            btnCloseDb: document.getElementById(`${this.prefix}-btn-close-db`),
+            dbListContainer: document.getElementById(`${this.prefix}-db-list-container`),
+            dbTotalCount: document.getElementById(`${this.prefix}-db-total-count`),
+            btnPrevPage: document.getElementById(`${this.prefix}-btn-prev-page`),
+            btnNextPage: document.getElementById(`${this.prefix}-btn-next-page`),
+            pageIndicator: document.getElementById(`${this.prefix}-page-indicator`),
 
-    const maxPage = Math.ceil(JLPT_DATA.length / ITEMS_PER_PAGE) || 1;
-    els.pageIndicator.textContent = `${dbPage} / ${maxPage}`;
-}
+            // Feedback Modal
+            feedbackModal: document.getElementById(`${this.prefix}-feedback-modal`),
+            fbIcon: document.getElementById(`${this.prefix}-feedback-icon`),
+            fbTitle: document.getElementById(`${this.prefix}-feedback-title`),
+            fbKanji: document.getElementById(`${this.prefix}-fb-kanji`),
+            fbReading: document.getElementById(`${this.prefix}-fb-reading`),
+            fbMeaning: document.getElementById(`${this.prefix}-fb-meaning`),
+            fbExample: document.getElementById(`${this.prefix}-fb-example`),
+            btnNext: document.getElementById(`${this.prefix}-btn-next`),
+        };
 
-// Quiz Logic
-function startQuiz() {
-    if (JLPT_DATA.length === 0) {
-        alert("데이터가 없습니다.");
-        return;
+        this.attachEvents();
     }
 
-    // Prepare Queue (Random 20)
-    // If data < 20, take all.
-    const fullShuffled = shuffleArray([...JLPT_DATA]);
-    quizQueue = fullShuffled.slice(0, Math.min(QUIZ_SIZE, fullShuffled.length));
+    attachEvents() {
+        if (!this.els.btnStart) return;
 
-    currentQuestionIndex = 0;
-    score = { correct: 0, wrong: 0 };
-    wrongAnswers = [];
-
-    // UI Setup
-    els.progressContainer.classList.remove('hidden');
-    switchView('quiz');
-    showQuestion();
-}
-
-function switchView(viewName) {
-    Object.values(views).forEach(v => v.classList.remove('active', 'hidden'));
-    Object.values(views).forEach(v => v.classList.add('hidden'));
-    views[viewName].classList.remove('hidden');
-    views[viewName].classList.add('active');
-}
-
-function showQuestion() {
-    if (currentQuestionIndex >= quizQueue.length) {
-        finishQuiz();
-        return;
-    }
-
-    const item = quizQueue[currentQuestionIndex];
-    const total = quizQueue.length;
-
-    // Update Progress
-    els.progressText.textContent = `${currentQuestionIndex + 1} / ${total}`;
-    const pct = ((currentQuestionIndex) / total) * 100;
-    els.progressFill.style.width = `${pct}%`;
-
-    // Render Question
-    els.questionKanji.textContent = item.word;
-
-    // Generate Options
-    const options = generateOptions(item);
-    renderOptions(options, item);
-}
-
-function generateOptions(correctItem) {
-    // Correct Option
-    const correctOption = {
-        text: correctItem.meaning,
-        isCorrect: true,
-        original: correctItem
-    };
-
-    // Distractors
-    // Filter out the current item to avoid duplicate correct answers
-    const otherItems = JLPT_DATA.filter(d => d.word !== correctItem.word);
-
-    // Shuffle and pick 3
-    const shuffledOthers = shuffleArray([...otherItems]);
-    const distractors = shuffledOthers.slice(0, 3).map(item => ({
-        text: item.meaning, // Distractor is Meaning
-        isCorrect: false,
-        original: item
-    }));
-
-    // If we don't have enough data (e.g. testing with < 4 items), handle gracefully
-    // But user asks for 30 items so it should be fine.
-
-    // Combine and Shuffle
-    return shuffleArray([correctOption, ...distractors]);
-}
-
-function renderOptions(options, currentItem) {
-    els.optionsContainer.innerHTML = '';
-    const labels = ['A', 'B', 'C', 'D'];
-
-    options.forEach((opt, idx) => {
-        const btn = document.createElement('button');
-        btn.className = 'btn-choice';
-        btn.innerHTML = `
-            <span class="choice-label">${labels[idx]}</span>
-            <span class="choice-text">${opt.text}</span>
-        `;
-        btn.onclick = () => handleAnswer(opt, currentItem);
-        els.optionsContainer.appendChild(btn);
-    });
-}
-
-function handleAnswer(selectedOption, currentItem) {
-    const isCorrect = selectedOption.isCorrect;
-
-    if (isCorrect) {
-        score.correct++;
-        showFeedbackModal(true, currentItem);
-    } else {
-        score.wrong++;
-        wrongAnswers.push({
-            question: currentItem,
-            selected: selectedOption.text
+        this.els.btnStart.addEventListener('click', () => this.startQuiz());
+        this.els.btnStop.addEventListener('click', () => this.finishQuiz(true));
+        this.els.btnRestart.addEventListener('click', () => {
+            // Soft reset without reload if possible, or reload just resets everything. 
+            // Since we have two managers, reload kills both. 
+            // Better to implement soft reset.
+            this.switchView('start');
         });
-        showFeedbackModal(false, currentItem);
-    }
-}
 
-function showFeedbackModal(isCorrect, item) {
-    els.modal.classList.remove('hidden');
+        // Feedback Modal
+        this.els.btnNext.addEventListener('click', () => this.nextQuestion());
 
-    if (isCorrect) {
-        els.modalIcon.textContent = '✅';
-        els.modalTitle.textContent = '정답입니다!';
-        els.modalTitle.style.color = 'var(--correct)';
-    } else {
-        els.modalIcon.textContent = '❌';
-        els.modalTitle.textContent = '아쉽네요...';
-        els.modalTitle.style.color = 'var(--wrong)';
-    }
+        // DB Modal
+        this.els.btnViewDb.addEventListener('click', () => this.openDbModal());
+        this.els.btnCloseDb.addEventListener('click', () => this.closeDbModal());
+        this.els.btnPrevPage.addEventListener('click', () => this.changeDbPage(-1));
+        this.els.btnNextPage.addEventListener('click', () => this.changeDbPage(1));
 
-    els.fbKanji.textContent = item.word;
-    els.fbReading.textContent = item.reading;
-    els.fbMeaning.textContent = item.meaning;
-    els.fbExample.textContent = item.example || "";
-}
-
-function nextQuestion() {
-    els.modal.classList.add('hidden');
-    currentQuestionIndex++;
-    showQuestion();
-}
-
-function finishQuiz(earlyExit = false) {
-    els.progressContainer.classList.add('hidden');
-    switchView('report');
-
-    const totalAnswered = score.correct + score.wrong;
-    if (totalAnswered === 0 && earlyExit) {
-        els.scoreText.textContent = "0%";
-        els.correctCount.textContent = 0;
-        els.wrongCount.textContent = 0;
-        return;
+        // Outside click for DB modal
+        window.addEventListener('click', (e) => {
+            if (e.target === this.els.dbModal) this.closeDbModal();
+        });
     }
 
-    const percentage = Math.round((score.correct / totalAnswered) * 100) || 0;
-    els.scoreText.textContent = `${percentage}%`;
+    // ----------------------
+    // View Logic
+    // ----------------------
+    switchView(viewName) { // 'start', 'quiz', 'report'
+        const views = [this.els.viewStart, this.els.viewQuiz, this.els.viewReport];
+        views.forEach(v => v.classList.remove('active', 'hidden'));
+        views.forEach(v => v.classList.add('hidden'));
 
-    els.scoreCircle.style.strokeDashoffset = 100 - percentage;
-    if (percentage >= 80) els.scoreCircle.style.stroke = 'var(--correct)';
-    else if (percentage >= 50) els.scoreCircle.style.stroke = 'var(--accent)';
-    else els.scoreCircle.style.stroke = 'var(--wrong)';
+        if (viewName === 'start') this.els.viewStart.classList.remove('hidden');
+        if (viewName === 'quiz') this.els.viewQuiz.classList.remove('hidden');
+        if (viewName === 'report') this.els.viewReport.classList.remove('hidden');
 
-    els.correctCount.textContent = score.correct;
-    els.wrongCount.textContent = score.wrong;
+        // Always remove active from all first
+        views.forEach(v => {
+            if (!v.classList.contains('hidden')) v.classList.add('active');
+        });
+    }
 
-    if (wrongAnswers.length > 0) {
-        els.wrongSection.classList.remove('hidden');
-        els.wrongList.innerHTML = '';
-        wrongAnswers.forEach(wa => {
-            const li = document.createElement('li');
-            li.innerHTML = `
-                <div style="font-weight:bold; margin-bottom:5px;">${wa.question.word} [${wa.question.reading}]</div>
-                <div style="color:#aaa; font-size:0.9rem;">정답: ${wa.question.meaning}</div>
-                <div style="color:var(--wrong); font-size:0.9rem;">선택: ${wa.selected}</div>
+    // ----------------------
+    // Quiz Flow
+    // ----------------------
+    startQuiz() {
+        if (this.data.length === 0) {
+            alert("데이터가 없습니다. (Data is empty)");
+            return;
+        }
+
+        const QUIZ_SIZE = 20;
+        const shuffled = this.shuffle([...this.data]);
+        this.quizQueue = shuffled.slice(0, Math.min(QUIZ_SIZE, shuffled.length));
+
+        this.currentIndex = 0;
+        this.score = { correct: 0, wrong: 0 };
+        this.wrongAnswers = [];
+
+        this.els.progressContainer.classList.remove('hidden');
+        this.switchView('quiz');
+        this.renderQuestion();
+    }
+
+    renderQuestion() {
+        if (this.currentIndex >= this.quizQueue.length) {
+            this.finishQuiz();
+            return;
+        }
+
+        const item = this.quizQueue[this.currentIndex];
+        const total = this.quizQueue.length;
+
+        // Progress
+        this.els.progressText.textContent = `${this.currentIndex + 1} / ${total}`;
+        const pct = ((this.currentIndex) / total) * 100;
+        this.els.progressFill.style.width = `${pct}%`;
+
+        // Question
+        this.els.questionKanji.textContent = item.word;
+
+        // Options
+        const options = this.generateOptions(item);
+        this.renderOptionButtons(options, item);
+    }
+
+    generateOptions(correctItem) {
+        // Distractors come from the SAME pool (Basic->Basic, Advanced->Advanced)
+        // Correct Option
+        const correctOption = {
+            text: correctItem.meaning,
+            isCorrect: true,
+            original: correctItem
+        };
+
+        const otherItems = this.data.filter(d => d.word !== correctItem.word);
+        const distractors = this.shuffle([...otherItems]).slice(0, 3).map(item => ({
+            text: item.meaning,
+            isCorrect: false,
+            original: item
+        }));
+
+        return this.shuffle([correctOption, ...distractors]);
+    }
+
+    renderOptionButtons(options, currentItem) {
+        this.els.optionsContainer.innerHTML = '';
+        const labels = ['A', 'B', 'C', 'D'];
+
+        options.forEach((opt, idx) => {
+            const btn = document.createElement('button');
+            btn.className = 'btn-choice';
+            btn.innerHTML = `
+                <span class="choice-label">${labels[idx]}</span>
+                <span class="choice-text">${opt.text}</span>
             `;
-            els.wrongList.appendChild(li);
+            btn.onclick = () => this.handleAnswer(opt, currentItem);
+            this.els.optionsContainer.appendChild(btn);
         });
-    } else {
-        els.wrongSection.classList.add('hidden');
+    }
+
+    handleAnswer(selectedOption, currentItem) {
+        const isCorrect = selectedOption.isCorrect;
+
+        if (isCorrect) {
+            this.score.correct++;
+            this.showFeedback(true, currentItem);
+        } else {
+            this.score.wrong++;
+            this.wrongAnswers.push({
+                question: currentItem,
+                selected: selectedOption.text
+            });
+            this.showFeedback(false, currentItem);
+        }
+    }
+
+    showFeedback(isCorrect, item) {
+        this.els.feedbackModal.classList.remove('hidden');
+
+        if (isCorrect) {
+            this.els.fbIcon.textContent = '✅';
+            this.els.fbTitle.textContent = 'Correct!';
+            this.els.fbTitle.style.color = 'var(--correct)';
+        } else {
+            this.els.fbIcon.textContent = '❌';
+            this.els.fbTitle.textContent = 'Incorrect...';
+            this.els.fbTitle.style.color = 'var(--wrong)';
+        }
+
+        this.els.fbKanji.textContent = item.word;
+        this.els.fbReading.textContent = item.reading;
+
+        // Advanced Logic: Highlight synonyms if available
+        if (this.options.highlightSynonyms) {
+            // Replace '≒' with a highlighted span if needed, or just let CSS do it.
+            // But let's make it clearer.
+            let meaningDisplay = item.meaning;
+            if (meaningDisplay.includes('≒')) {
+                meaningDisplay = meaningDisplay.replace('≒', '<br><span style="color:#d8b4fe; font-weight:bold;">≒</span>');
+            }
+            this.els.fbMeaning.innerHTML = meaningDisplay;
+        } else {
+            this.els.fbMeaning.textContent = item.meaning;
+        }
+
+        this.els.fbExample.textContent = item.example || "";
+    }
+
+    nextQuestion() {
+        this.els.feedbackModal.classList.add('hidden');
+        this.currentIndex++;
+        this.renderQuestion();
+    }
+
+    finishQuiz(earlyExit = false) {
+        this.els.progressContainer.classList.add('hidden');
+        this.switchView('report');
+
+        const totalAnswered = this.score.correct + this.score.wrong;
+        if (totalAnswered === 0 && earlyExit) {
+            this.els.scoreText.textContent = "0%";
+            this.els.correctCount.textContent = 0;
+            this.els.wrongCount.textContent = 0;
+            return;
+        }
+
+        const percentage = Math.round((this.score.correct / totalAnswered) * 100) || 0;
+        this.els.scoreText.textContent = `${percentage}%`;
+
+        // Circle Animation
+        this.els.scoreCircle.style.strokeDashoffset = 100 - percentage;
+
+        let strokeColor = 'var(--wrong)';
+        if (percentage >= 80) strokeColor = 'var(--correct)';
+        else if (percentage >= 50) strokeColor = this.options.themeColor;
+
+        this.els.scoreCircle.style.stroke = strokeColor;
+
+        this.els.correctCount.textContent = this.score.correct;
+        this.els.wrongCount.textContent = this.score.wrong;
+
+        // Wrong List
+        if (this.wrongAnswers.length > 0) {
+            this.els.wrongSection.classList.remove('hidden');
+            this.els.wrongList.innerHTML = '';
+            this.wrongAnswers.forEach(wa => {
+                const li = document.createElement('li');
+                li.innerHTML = `
+                    <div style="font-weight:bold; margin-bottom:5px;">${wa.question.word} [${wa.question.reading}]</div>
+                    <div style="color:#aaa; font-size:0.9rem;">정답: ${wa.question.meaning}</div>
+                    <div style="color:var(--wrong); font-size:0.9rem;">선택: ${wa.selected}</div>
+                `;
+                this.els.wrongList.appendChild(li);
+            });
+        } else {
+            this.els.wrongSection.classList.add('hidden');
+        }
+    }
+
+    // ----------------------
+    // DB Modal Logic
+    // ----------------------
+    openDbModal() {
+        this.dbPage = 1;
+        this.els.dbTotalCount.textContent = this.data.length;
+        this.renderDbPage();
+        this.els.dbModal.classList.remove('hidden');
+    }
+
+    closeDbModal() {
+        this.els.dbModal.classList.add('hidden');
+    }
+
+    changeDbPage(delta) {
+        const maxPage = Math.ceil(this.data.length / ITEMS_PER_PAGE) || 1;
+        const newPage = this.dbPage + delta;
+        if (newPage >= 1 && newPage <= maxPage) {
+            this.dbPage = newPage;
+            this.renderDbPage();
+        }
+    }
+
+    renderDbPage() {
+        this.els.dbListContainer.innerHTML = '';
+        const startIdx = (this.dbPage - 1) * ITEMS_PER_PAGE;
+        const endIdx = startIdx + ITEMS_PER_PAGE;
+        const pageItems = this.data.slice(startIdx, endIdx);
+
+        pageItems.forEach((item, idx) => {
+            const div = document.createElement('div');
+            div.style.padding = "10px";
+            div.style.borderBottom = "1px solid rgba(255,255,255,0.1)";
+
+            // Advanced formatting
+            let meaningHtml = item.meaning;
+            if (this.options.highlightSynonyms && meaningHtml.includes('≒')) {
+                meaningHtml = meaningHtml.replace('≒', '<span style="color:#d8b4fe;">≒</span>');
+            }
+
+            div.innerHTML = `
+                <div style="font-size:1.1rem; font-weight:bold; color:${this.options.themeColor};">${startIdx + idx + 1}. ${item.word}</div>
+                <div style="font-size:0.9rem; color:#ccc;">${item.reading}</div>
+                <div style="margin-top:5px; font-size:0.95rem;">${meaningHtml}</div>
+            `;
+            this.els.dbListContainer.appendChild(div);
+        });
+
+        const maxPage = Math.ceil(this.data.length / ITEMS_PER_PAGE) || 1;
+        this.els.pageIndicator.textContent = `${this.dbPage} / ${maxPage}`;
+    }
+
+    shuffle(array) {
+        for (let i = array.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [array[i], array[j]] = [array[j], array[i]];
+        }
+        return array;
     }
 }
 
