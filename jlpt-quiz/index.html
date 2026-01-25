@@ -57,8 +57,11 @@
                             <span class="value" id="total-db-count">0</span>
                         </div>
                     </div>
-                    <button id="btn-start" class="btn-primary">퀴즈 시작하기</button>
-                    <!-- Future feature: settings or level select -->
+                    <div style="display: flex; gap: 10px; width: 100%;">
+                        <button id="btn-start" class="btn-primary" style="flex: 2; margin-bottom: 0;">퀴즈 시작</button>
+                        <button id="btn-view-db" class="btn-secondary"
+                            style="flex: 1; margin-bottom: 0; background: rgba(255,255,255,0.15);">DB 보기</button>
+                    </div>
                 </div>
             </section>
 
@@ -145,6 +148,27 @@
         </div>
 
     </div>
+    <!-- DB Modal -->
+    <div id="db-modal" class="modal hidden">
+        <div class="modal-content db-content" style="max-width: 500px; width: 90%;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <h2 style="font-size: 1.5rem;">단어장 (Total <span id="db-total-count">0</span>)</h2>
+                <button id="btn-close-db"
+                    style="background: none; color: #fff; font-size: 2rem; padding: 0; line-height: 1;">&times;</button>
+            </div>
+
+            <div id="db-list-container" style="min-height: 300px; max-height: 400px; overflow-y: auto;">
+                <!-- Rendered Items -->
+            </div>
+
+            <div style="display: flex; justify-content: center; align-items: center; gap: 15px; margin-top: 15px;">
+                <button id="btn-prev-page" class="btn-secondary small" style="margin: 0; width: 40px;">&lt;</button>
+                <span id="page-indicator" style="color: #94a3b8; font-variant-numeric: tabular-nums;">1 / 1</span>
+                <button id="btn-next-page" class="btn-secondary small" style="margin: 0; width: 40px;">&gt;</button>
+            </div>
+        </div>
+    </div>
+
     <script src="script.js"></script>
 </body>
 
