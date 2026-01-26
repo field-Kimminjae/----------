@@ -27,7 +27,7 @@ OUTPUT_FILE = os.path.join(BASE_DIR, "jlpt_data.txt")
     # Group 1: Word
     # Group 2: Reading (Optional)
     # Group 3: Meaning (Content inside [])
-    item_pattern = re.compile(r'^(.+?)(?:\s*\((.+?)\))?\s*\[(.+?)\]$')
+    item_pattern = re.compile(r'^(.+?)(?:\s*\((.+?)\))?\s*\[(.+?)\](?:.*)$')
 
     for line in lines:
         line = line.strip()
@@ -35,9 +35,29 @@ OUTPUT_FILE = os.path.join(BASE_DIR, "jlpt_data.txt")
             continue
 
         # Skip headers / comments
-        if "페이지" in line or line.startswith("(") and "행)" in line:
+        # 1. Page numbers or Row indicators
+        if "페이지" in line or (line.startswith("(") and "행)" in line):
              print(f"Skipping header/comment: {line}")
              continue
+        
+        # 2. Year headers like [2016년] or Section headers like [ま・ら (마·라) 행]
+        # These usually start with [ and end with ] and don't look like definitions
+        if line.startswith("[") and line.endswith("]"):
+             print(f"Skipping section header: {line}")
+             continue
+
+        # 3. Numbered headers like "1. 2017년"
+        # Match pattern: Start of line, digits, dot, space?
+        if re.match(r'^\d+\.', line):
+             print(f"Skipping numbered header: {line}")
+             continue
+
+        # 4. Practice problem headers like "[연습문제 / 기타]"
+        if "연습문제" in line:
+             print(f"Skipping practice header: {line}")
+             continue
+
+        # 5. Simple comments in parenthesis
         if line.startswith("(") and ")" in line and not "[" in line:
              print(f"Skipping comment: {line}")
              continue
