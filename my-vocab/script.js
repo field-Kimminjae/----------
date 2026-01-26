@@ -8,12 +8,23 @@
 // Left: LC Misheard Memo Data
 // Format: Actual | Misheard | Note
 const INITIAL_DATA_RAW = [
-    "All rights reserved | All rights this from | '모든 권리 보유'라는 뜻인데, 소리가 뭉쳐서 'All rights this from'으로 오청함."
+    "All rights reserved | All rights this from | '모든 권리 보유'라는 뜻인데, 소리가 뭉쳐서 'All rights this from'으로 오청함.",
+    "In this Video | and this video / at this video | 소리에는 뭉게져서 들리는게 원인이고, 뭉게져서 들어도 이정도는 항상 뭉게져서 들어도 문맥적 예측을 해서 바로 바꿔듣자.",
+    "Yeah but Thanks, me,too. | I'm thank, Micheal. | 머릿속에서 못 듣고 지나가면 알아서 정보가 채워지는것을 주의, 미리 문장을 외워두기. Yeah, but Thanks, Me too",
+    "And I watch your show. I watch Impractical Jokers all the time. | I'm what you syre? What you block on Jake on 블라블라. | 아예 듣기 힘든거는 들리지도 안됨. 계속 듣고 문장을 외워야 해",
+    "That's exactly we were saying | That's exa we were saying | 그냥 빠름",
+    "And we didn't get just one member, but all four of the pop rock global phenomenon, Five seconds of Summer. | It's just one meal, but four 블라블라 | 그냥 안들리는거임 반복 듣기 부탁"
 ];
 
 // Right: Vocab Context Quiz Data
 const VOCAB_QUIZ_DATA = [
-    { sentence: "I want to _______ my English.", word: "improve", answer: "O", explanation: "문맥상 적절합니다." }
+    { sentence: "I want to _______ my English.", word: "improve", answer: "O", explanation: "문맥상 적절합니다." },
+    { sentence: "Million = 10^6, Billion = 10^9, Trillion = 10^12", word: "Number Units", answer: "O", explanation: "Million(10의 6승), Billion(10의 9승), Trillion(10의 12승)이 맞습니다." },
+    { sentence: "I'm tryna get there on time.", word: "tryna", answer: "O", explanation: "trying to(하려고 애쓰고 있다)의 줄임말입니다." },
+    { sentence: "It's done.", word: "Done", answer: "O", explanation: "Done은 do의 p.p형태 맞지만, 형용사로 쓰여 '해온', '끝났다'라는 뜻입니다." },
+    { sentence: "He got nailed by the ball.", word: "get nailed by", answer: "O", explanation: "'정타로 맞다', '세게 두들겨 맞다'라는 뜻입니다." },
+    { sentence: "He gave a snort.", word: "snort", answer: "O", explanation: "콧김을 내뿜다, 쭉 들이키다" },
+    { sentence: "The fact that that's his response is crazy.", word: "Expression", answer: "O", explanation: "'방금 대답 충격적이었어'라는 뜻입니다." }
 ];
 
 /**
