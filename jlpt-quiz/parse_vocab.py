@@ -5,13 +5,20 @@ BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 INPUT_FILE = os.path.join(BASE_DIR, "raw_input.txt")
 OUTPUT_FILE = os.path.join(BASE_DIR, "jlpt_data.txt")
 
-def parse_and_append():
-    if not os.path.exists(INPUT_FILE):
-        print(f"Error: {INPUT_FILE} not found.")
-        return
+    # Logging setup
+    LOG_FILE = os.path.join(BASE_DIR, "parsing_log.txt")
+    with open(LOG_FILE, 'w', encoding='utf-8') as log:
+        log.write("Starting parsing...\n")
+        log.write(f"Input file: {INPUT_FILE}\n")
+        
+        if not os.path.exists(INPUT_FILE):
+            log.write(f"Error: {INPUT_FILE} not found.\n")
+            print(f"Error: {INPUT_FILE} not found.")
+            return
 
-    with open(INPUT_FILE, 'r', encoding='utf-8') as f:
-        lines = f.readlines()
+        with open(INPUT_FILE, 'r', encoding='utf-8') as f:
+            lines = f.readlines()
+        log.write(f"Read {len(lines)} lines.\n")
 
     entries = []
     current_entry = None
@@ -73,6 +80,8 @@ def parse_and_append():
 
     # Write to output file
     print(f"Found {len(entries)} new entries.")
+    with open(LOG_FILE, 'a', encoding='utf-8') as log:
+        log.write(f"Found {len(entries)} new entries.\n")
     
     with open(OUTPUT_FILE, 'a', encoding='utf-8') as f:
         # f.write("\n") # Ensure newline start?
@@ -83,6 +92,8 @@ def parse_and_append():
             line_out = f"{entry['word']} | {entry['reading']} | {entry['meaning']}\n"
             f.write(line_out)
             print(f"Added: {line_out.strip()}")
+            with open(LOG_FILE, 'a', encoding='utf-8') as log:
+                log.write(f"Added: {line_out.strip()}\n")
 
 if __name__ == "__main__":
     parse_and_append()
