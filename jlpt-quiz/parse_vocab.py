@@ -1,8 +1,9 @@
 import re
 import os
 
-INPUT_FILE = r"c:\토익 공부 웹사이트\jlpt-quiz\raw_input.txt"
-OUTPUT_FILE = r"c:\토익 공부 웹사이트\jlpt-quiz\jlpt_data.txt"
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+INPUT_FILE = os.path.join(BASE_DIR, "raw_input.txt")
+OUTPUT_FILE = os.path.join(BASE_DIR, "jlpt_data.txt")
 
 def parse_and_append():
     if not os.path.exists(INPUT_FILE):

@@ -3,9 +3,10 @@ import time
 import re
 
 # Files
-INPUT_FILE = r"c:\토익 공부 웹사이트\jlpt-quiz\raw_input.txt"
-OUTPUT_FILE = r"c:\토익 공부 웹사이트\jlpt-quiz\jlpt_data.txt"
-HISTORY_FILE = r"c:\토익 공부 웹사이트\jlpt-quiz\processed_history.txt"
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+INPUT_FILE = os.path.join(BASE_DIR, "raw_input.txt")
+OUTPUT_FILE = os.path.join(BASE_DIR, "jlpt_data.txt")
+HISTORY_FILE = os.path.join(BASE_DIR, "processed_history.txt")
 
 def parse_and_append():
     """Reads input, parses it, and appends to output and history."""
