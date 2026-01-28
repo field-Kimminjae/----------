@@ -13,7 +13,9 @@ const INITIAL_DATA_RAW = [
     "Yeah but Thanks, me,too. | I'm thank, Micheal. | 머릿속에서 못 듣고 지나가면 알아서 정보가 채워지는것을 주의, 미리 문장을 외워두기. Yeah, but Thanks, Me too",
     "And I watch your show. I watch Impractical Jokers all the time. | I'm what you syre? What you block on Jake on 블라블라. | 아예 듣기 힘든거는 들리지도 안됨. 계속 듣고 문장을 외워야 해",
     "That's exactly we were saying | That's exa we were saying | 그냥 빠름",
-    "And we didn't get just one member, but all four of the pop rock global phenomenon, Five seconds of Summer. | It's just one meal, but four 블라블라 | 그냥 안들리는거임 반복 듣기 부탁"
+    "And we didn't get just one member, but all four of the pop rock global phenomenon, Five seconds of Summer. | It's just one meal, but four 블라블라 | 그냥 안들리는거임 반복 듣기 부탁",
+    "Well, All these celebrities will be in challenges inspired by my ten-episode series, beast games. | Well, All this celebrities will be a challenge inspired by My 블라블라 beast game | 너무 빨라서 고스팅이 어려움",
+    " | | 브리핑을 받는 것이기에 단시간 말하고 끝내는 알바이고, 잘 쉬고해야하는 쿠팡 알바임."
 ];
 
 // Right: Vocab Context Quiz Data
@@ -24,7 +26,35 @@ const VOCAB_QUIZ_DATA = [
     { sentence: "It's done.", word: "Done", answer: "O", explanation: "Done은 do의 p.p형태 맞지만, 형용사로 쓰여 '해온', '끝났다'라는 뜻입니다." },
     { sentence: "He got nailed by the ball.", word: "get nailed by", answer: "O", explanation: "'정타로 맞다', '세게 두들겨 맞다'라는 뜻입니다." },
     { sentence: "He gave a snort.", word: "snort", answer: "O", explanation: "콧김을 내뿜다, 쭉 들이키다" },
-    { sentence: "The fact that that's his response is crazy.", word: "Expression", answer: "O", explanation: "'방금 대답 충격적이었어'라는 뜻입니다." }
+    { sentence: "The fact that that's his response is crazy.", word: "Expression", answer: "O", explanation: "'방금 대답 충격적이었어'라는 뜻입니다." },
+    { sentence: "The show will kick off soon.", word: "kick off", answer: "O", explanation: "시작하다" },
+    { sentence: "This beat is nasty.", word: "nasty", answer: "O", explanation: "'장난 아닌!' 이라는 뜻입니다." },
+    { sentence: "They sell artisanal donuts.", word: "artisanal donuts", answer: "O", explanation: "'장인정신이 깃든 도넛'이라는 뜻입니다." },
+    { sentence: "Add the balsamic reduction.", word: "reduction", answer: "O", explanation: "'농축소스'라는 뜻입니다." },
+    { sentence: "Is this to your liking?", word: "your liking", answer: "O", explanation: "'당신의 취향'이라는 뜻입니다." },
+    { sentence: "She speaks French as well as English.", word: "As well as", answer: "O", explanation: "그리고, A 뿐만 아니라 B도 (접속사 역할 많이 함)" },
+    { sentence: "Let's jump right into it.", word: "jump right into it", answer: "O", explanation: "'망설임없이 바로 시작하다'라는 뜻입니다." },
+    { sentence: "Make sure you bread correctly.", word: "bread correctly", answer: "O", explanation: "'알맞게 튀김옷을 입히다'라는 뜻입니다." },
+    { sentence: "I'll take you out of France into Italy.", word: "take out of France into Italy", answer: "O", explanation: "'프랑스에서 이탈리아로 모시겠습니다'라는 뜻입니다." },
+    { sentence: "Come on up!", word: "Come on up", answer: "O", explanation: "'이리오세요'라는 뜻입니다." },
+    { sentence: "Do you like guacamole?", word: "guacamole", answer: "O", explanation: "과카몰래(멕시코의 아보카드 소스로, 아보카도와 으꺤 양파, 토마토, 고수, 라임즙, 소금을 섞어 만든 소스)" },
+    { sentence: "We've done well so far.", word: "so far", answer: "O", explanation: "'현재까지', '지금까지'라는 뜻입니다." },
+    { sentence: "Things started to fall apart.", word: "fall apart", answer: "O", explanation: "'부서지다'라는 뜻입니다." },
+    { sentence: "I'm over here being honest.", word: "I'm over here being honest", answer: "O", explanation: "'난 (너와 다르게) 솔직한 거다'라는 뉘앙스입니다." },
+    { sentence: "Let's rest for a bit.", word: "for a bit", answer: "O", explanation: "'아주 잠시 동안', '대기석으로'라는 뜻입니다." },
+    { sentence: "I think I'm gonna puke.", word: "puke", answer: "O", explanation: "'토하다'라는 뜻입니다." },
+    { sentence: "What am I supposed to do?", word: "be supposed to do", answer: "O", explanation: "'원래는 ~하려고 했다'라는 뜻입니다." },
+    { sentence: "Go get 'em!", word: "'em", answer: "O", explanation: "them의 축약형입니다." },
+    { sentence: "That is the exact reason.", word: "exact", answer: "O", explanation: "'정확한', '적확한'이라는 뜻입니다." },
+    { sentence: "That's kinda how I picked.", word: "That's kinda how I picked", answer: "O", explanation: "'제가 생각한 거랑 비슷해요'라는 뜻입니다." },
+    { sentence: "Oh my goodness!", word: "Oh my goodness", answer: "O", explanation: "'세상에'라는 뜻입니다." },
+    { sentence: "He was handcuffed.", word: "handcuffed", answer: "O", explanation: "'수갑을 차다'라는 뜻입니다." },
+    { sentence: "It just dropped.", word: "just dropped", answer: "O", explanation: "'방금 공개 됐어요'라는 뜻입니다." },
+    { sentence: "She is a masseuse.", word: "masseuse", answer: "O", explanation: "'마사지사'라는 뜻입니다." },
+    { sentence: "The population was decimated.", word: "decimated", answer: "O", explanation: "'(머리가) 날아가다' (본래 뜻: 대량 살상하다)라는 뜻으로 사용되었습니다." },
+    { sentence: "That's a twist.", word: "twist", answer: "O", explanation: "'반전'이라는 뜻입니다." },
+    { sentence: "They put up scaffolding.", word: "scaffolding", answer: "O", explanation: "'천장' (혹은 비계)이라는 뜻입니다." },
+    { sentence: "I need to lock in.", word: "lock in", answer: "O", explanation: "'집중하다' (finalize의 '확정하다' 뜻도 있음)라는 뜻입니다." }
 ];
 
 /**
