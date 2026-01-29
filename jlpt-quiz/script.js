@@ -143,7 +143,8 @@ class QuizManager {
             btnNext: document.getElementById(`${this.prefix}-btn-next`),
 
             // Example Manager UI
-            btnExample: document.getElementById(`${this.prefix}-btn-example`),
+            btnExampleStart: document.getElementById(`${this.prefix}-btn-example-start`),
+            btnExampleQuiz: document.getElementById(`${this.prefix}-btn-example-quiz`),
             exampleModal: document.getElementById(`${this.prefix}-example-modal`),
             btnCloseExample: document.getElementById(`${this.prefix}-btn-close-example`),
             exampleListContainer: document.getElementById(`${this.prefix}-example-list-container`),
@@ -187,7 +188,9 @@ class QuizManager {
         });
 
         // Example Events
-        if (this.els.btnExample) this.els.btnExample.addEventListener('click', () => this.openExampleModal());
+        if (this.els.btnExampleStart) this.els.btnExampleStart.addEventListener('click', () => this.openExampleModal());
+        if (this.els.btnExampleQuiz) this.els.btnExampleQuiz.addEventListener('click', () => this.openExampleModal());
+
         if (this.els.btnCloseExample) this.els.btnCloseExample.addEventListener('click', () => this.closeExampleModal());
         if (this.els.btnAddExample) this.els.btnAddExample.addEventListener('click', () => this.addExample());
         if (this.els.btnPrevExamplePage) this.els.btnPrevExamplePage.addEventListener('click', () => this.changeExamplePage(-1));

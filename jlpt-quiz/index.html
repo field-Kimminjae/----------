@@ -50,7 +50,7 @@
 
             <!-- Start View -->
             <section id="left-view-start" class="view active">
-                <div class="hero-card">
+                <div class="hero-card" style="position: relative;">
                     <h1>Basic<br>Vocab</h1>
                     <p>JLPT 필수 단어 (기본)</p>
                     <div class="stats-preview">
@@ -60,6 +60,7 @@
                         </div>
                     </div>
                     <div style="display: flex; gap: 10px; width: 100%;">
+                        <button id="left-btn-example-start" class="btn-top-right small">예문/예시어</button>
                         <button id="left-btn-start" class="btn-primary" style="flex: 2; margin-bottom: 0;">퀴즈
                             시작</button>
                         <button id="left-btn-view-db" class="btn-secondary"
@@ -71,7 +72,7 @@
             <!-- Quiz View -->
             <section id="left-view-quiz" class="view hidden">
                 <div class="card quiz-card" style="position: relative;">
-                    <button id="left-btn-example" class="btn-example-icon" title="나만의 예문 관리">📖</button>
+                    <button id="left-btn-example-quiz" class="btn-top-right small">예문/예시어</button>
                     <div class="question-type">Basic Meaning</div>
 
                     <!-- Question Area -->
@@ -129,7 +130,7 @@
 
             <!-- Start View -->
             <section id="right-view-start" class="view active">
-                <div class="hero-card">
+                <div class="hero-card" style="position: relative;">
                     <h1>Advanced<br>Synonyms</h1>
                     <p>유의어 및 심화 학습</p>
                     <div class="stats-preview">
@@ -139,6 +140,7 @@
                         </div>
                     </div>
                     <div style="display: flex; gap: 10px; width: 100%;">
+                        <button id="right-btn-example-start" class="btn-top-right small">예문/예시어</button>
                         <button id="right-btn-start" class="btn-primary" style="flex: 2; margin-bottom: 0;">퀴즈
                             시작</button>
                         <button id="right-btn-view-db" class="btn-secondary"
@@ -150,7 +152,7 @@
             <!-- Quiz View -->
             <section id="right-view-quiz" class="view hidden">
                 <div class="card quiz-card" style="position: relative;">
-                    <button id="right-btn-example" class="btn-example-icon" title="나만의 예문 관리">📖</button>
+                    <button id="right-btn-example-quiz" class="btn-top-right small">예문/예시어</button>
                     <div class="question-type">Synonym Check</div>
 
                     <!-- Question Area -->
@@ -275,29 +277,36 @@
 
     <!-- Left Example Modal -->
     <div id="left-example-modal" class="modal hidden">
-        <div class="modal-content db-content" style="max-width: 500px; width: 90%; display: flex; flex-direction: column; max-height: 80vh;">
+        <div class="modal-content db-content"
+            style="max-width: 500px; width: 90%; display: flex; flex-direction: column; max-height: 80vh;">
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
                 <h2 style="font-size: 1.5rem;">나만의 예문장 (<span id="left-example-total-count">0</span>)</h2>
                 <button id="left-btn-close-example"
                     style="background: none; color: #fff; font-size: 2rem; padding: 0; line-height: 1;">&times;</button>
             </div>
-            
+
             <!-- List Area -->
-            <div id="left-example-list-container" style="flex: 1; overflow-y: auto; margin-bottom: 15px; min-height: 200px;">
+            <div id="left-example-list-container"
+                style="flex: 1; overflow-y: auto; margin-bottom: 15px; min-height: 200px;">
                 <!-- Items will be injected here -->
             </div>
-            
+
             <!-- Pagination -->
             <div style="display: flex; justify-content: center; align-items: center; gap: 15px; margin-bottom: 15px;">
-                <button id="left-btn-prev-example-page" class="btn-secondary small" style="margin: 0; width: 40px;">&lt;</button>
-                <span id="left-example-page-indicator" style="color: #94a3b8; font-variant-numeric: tabular-nums;">1 / 1</span>
-                <button id="left-btn-next-example-page" class="btn-secondary small" style="margin: 0; width: 40px;">&gt;</button>
+                <button id="left-btn-prev-example-page" class="btn-secondary small"
+                    style="margin: 0; width: 40px;">&lt;</button>
+                <span id="left-example-page-indicator" style="color: #94a3b8; font-variant-numeric: tabular-nums;">1 /
+                    1</span>
+                <button id="left-btn-next-example-page" class="btn-secondary small"
+                    style="margin: 0; width: 40px;">&gt;</button>
             </div>
 
             <!-- Input Area -->
             <div class="example-input-area" style="border-top: 1px solid rgba(255,255,255,0.1); padding-top: 15px;">
-                <input type="text" id="left-input-example-jp" placeholder="일본어 예문 (예: 彼は毎朝コーヒーを飲む)" class="input-field" style="margin-bottom: 8px;">
-                <input type="text" id="left-input-example-kr" placeholder="한국어 해석 (예: 그는 매일 아침 커피를 마신다)" class="input-field" style="margin-bottom: 12px;">
+                <input type="text" id="left-input-example-jp" placeholder="일본어 예문 (예: 彼は毎朝コーヒーを飲む)" class="input-field"
+                    style="margin-bottom: 8px;">
+                <input type="text" id="left-input-example-kr" placeholder="한국어 해석 (예: 그는 매일 아침 커피를 마신다)"
+                    class="input-field" style="margin-bottom: 12px;">
                 <button id="left-btn-add-example" class="btn-primary small" style="width: 100%;">추가하기 (Add)</button>
             </div>
         </div>
@@ -305,29 +314,36 @@
 
     <!-- Right Example Modal -->
     <div id="right-example-modal" class="modal hidden">
-        <div class="modal-content db-content theme-purple-content" style="max-width: 500px; width: 90%; display: flex; flex-direction: column; max-height: 80vh;">
+        <div class="modal-content db-content theme-purple-content"
+            style="max-width: 500px; width: 90%; display: flex; flex-direction: column; max-height: 80vh;">
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
                 <h2 style="font-size: 1.5rem;">나만의 예문장 (<span id="right-example-total-count">0</span>)</h2>
                 <button id="right-btn-close-example"
                     style="background: none; color: #fff; font-size: 2rem; padding: 0; line-height: 1;">&times;</button>
             </div>
-            
+
             <!-- List Area -->
-            <div id="right-example-list-container" style="flex: 1; overflow-y: auto; margin-bottom: 15px; min-height: 200px;">
+            <div id="right-example-list-container"
+                style="flex: 1; overflow-y: auto; margin-bottom: 15px; min-height: 200px;">
                 <!-- Items will be injected here -->
             </div>
-            
+
             <!-- Pagination -->
             <div style="display: flex; justify-content: center; align-items: center; gap: 15px; margin-bottom: 15px;">
-                <button id="right-btn-prev-example-page" class="btn-secondary small" style="margin: 0; width: 40px;">&lt;</button>
-                <span id="right-example-page-indicator" style="color: #94a3b8; font-variant-numeric: tabular-nums;">1 / 1</span>
-                <button id="right-btn-next-example-page" class="btn-secondary small" style="margin: 0; width: 40px;">&gt;</button>
+                <button id="right-btn-prev-example-page" class="btn-secondary small"
+                    style="margin: 0; width: 40px;">&lt;</button>
+                <span id="right-example-page-indicator" style="color: #94a3b8; font-variant-numeric: tabular-nums;">1 /
+                    1</span>
+                <button id="right-btn-next-example-page" class="btn-secondary small"
+                    style="margin: 0; width: 40px;">&gt;</button>
             </div>
 
             <!-- Input Area -->
             <div class="example-input-area" style="border-top: 1px solid rgba(255,255,255,0.1); padding-top: 15px;">
-                <input type="text" id="right-input-example-jp" placeholder="일본어 예문 (예: 彼は毎朝コーヒーを飲む)" class="input-field" style="margin-bottom: 8px;">
-                <input type="text" id="right-input-example-kr" placeholder="한국어 해석 (예: 그는 매일 아침 커피를 마신다)" class="input-field" style="margin-bottom: 12px;">
+                <input type="text" id="right-input-example-jp" placeholder="일본어 예문 (예: 彼は毎朝コーヒーを飲む)" class="input-field"
+                    style="margin-bottom: 8px;">
+                <input type="text" id="right-input-example-kr" placeholder="한국어 해석 (예: 그는 매일 아침 커피를 마신다)"
+                    class="input-field" style="margin-bottom: 12px;">
                 <button id="right-btn-add-example" class="btn-primary small" style="width: 100%;">추가하기 (Add)</button>
             </div>
         </div>
