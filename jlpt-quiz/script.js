@@ -87,6 +87,12 @@ class QuizManager {
         this.wrongAnswers = [];
         this.dbPage = 1;
 
+        // Example State
+        this.exampleData = [];
+        this.examplePage = 1;
+        this.exampleStorageKey = `jlpt-${this.prefix}-examples`;
+        this.loadExamples();
+
         // Cache DOM Elements (using prefix)
         this.els = {
             viewStart: document.getElementById(`${this.prefix}-view-start`),
@@ -135,6 +141,19 @@ class QuizManager {
             fbMeaning: document.getElementById(`${this.prefix}-fb-meaning`),
             fbExample: document.getElementById(`${this.prefix}-fb-example`),
             btnNext: document.getElementById(`${this.prefix}-btn-next`),
+
+            // Example Manager UI
+            btnExample: document.getElementById(`${this.prefix}-btn-example`),
+            exampleModal: document.getElementById(`${this.prefix}-example-modal`),
+            btnCloseExample: document.getElementById(`${this.prefix}-btn-close-example`),
+            exampleListContainer: document.getElementById(`${this.prefix}-example-list-container`),
+            exampleTotalCount: document.getElementById(`${this.prefix}-example-total-count`),
+            btnPrevExamplePage: document.getElementById(`${this.prefix}-btn-prev-example-page`),
+            btnNextExamplePage: document.getElementById(`${this.prefix}-btn-next-example-page`),
+            examplePageIndicator: document.getElementById(`${this.prefix}-example-page-indicator`),
+            inputExampleJp: document.getElementById(`${this.prefix}-input-example-jp`),
+            inputExampleKr: document.getElementById(`${this.prefix}-input-example-kr`),
+            btnAddExample: document.getElementById(`${this.prefix}-btn-add-example`),
         };
 
         this.attachEvents();
@@ -164,7 +183,15 @@ class QuizManager {
         // Outside click for DB modal
         window.addEventListener('click', (e) => {
             if (e.target === this.els.dbModal) this.closeDbModal();
+            if (e.target === this.els.exampleModal) this.closeExampleModal();
         });
+
+        // Example Events
+        if (this.els.btnExample) this.els.btnExample.addEventListener('click', () => this.openExampleModal());
+        if (this.els.btnCloseExample) this.els.btnCloseExample.addEventListener('click', () => this.closeExampleModal());
+        if (this.els.btnAddExample) this.els.btnAddExample.addEventListener('click', () => this.addExample());
+        if (this.els.btnPrevExamplePage) this.els.btnPrevExamplePage.addEventListener('click', () => this.changeExamplePage(-1));
+        if (this.els.btnNextExamplePage) this.els.btnNextExamplePage.addEventListener('click', () => this.changeExamplePage(1));
     }
 
     // ----------------------
@@ -421,6 +448,116 @@ class QuizManager {
             [array[i], array[j]] = [array[j], array[i]];
         }
         return array;
+    }
+
+    // ----------------------
+    // Example Manager Logic
+    // ----------------------
+    loadExamples() {
+        try {
+            const stored = localStorage.getItem(this.exampleStorageKey);
+            this.exampleData = stored ? JSON.parse(stored) : [];
+        } catch (e) {
+            console.error("Failed to load examples", e);
+            this.exampleData = [];
+        }
+    }
+
+    saveExamples() {
+        localStorage.setItem(this.exampleStorageKey, JSON.stringify(this.exampleData));
+    }
+
+    openExampleModal() {
+        this.examplePage = 1;
+        this.renderExampleList();
+        this.els.exampleModal.classList.remove('hidden');
+    }
+
+    closeExampleModal() {
+        this.els.exampleModal.classList.add('hidden');
+    }
+
+    addExample() {
+        const jp = this.els.inputExampleJp.value.trim();
+        const kr = this.els.inputExampleKr.value.trim();
+
+        if (!jp || !kr) {
+            alert("일본어 예문과 해석을 모두 입력해주세요.");
+            return;
+        }
+
+        const newId = Date.now().toString(); // Simple unique ID
+        const newItem = { id: newId, jp, kr };
+
+        this.exampleData.push(newItem);
+        this.saveExamples();
+
+        // Clear inputs
+        this.els.inputExampleJp.value = '';
+        this.els.inputExampleKr.value = '';
+
+        // Refresh list (go to last page to see new item usually, or stay on current. Let's stay)
+        // Actually, let's go to the last page so user sees it? Or insert at top?
+        // Requirement said "Order added". So append. 
+        // Let's just reload current page or go to last page.
+        // I will just re-render current page. User can navigate.
+        this.renderExampleList();
+        this.els.inputExampleJp.focus();
+    }
+
+    deleteExample(id) {
+        if (!confirm("정말 삭제하시겠습니까?")) return;
+        this.exampleData = this.exampleData.filter(item => item.id !== id);
+        this.saveExamples();
+        this.renderExampleList();
+    }
+
+    changeExamplePage(delta) {
+        const maxPage = Math.ceil(this.exampleData.length / ITEMS_PER_PAGE) || 1;
+        const newPage = this.examplePage + delta;
+        if (newPage >= 1 && newPage <= maxPage) {
+            this.examplePage = newPage;
+            this.renderExampleList();
+        }
+    }
+
+    renderExampleList() {
+        this.els.exampleTotalCount.textContent = this.exampleData.length;
+        this.els.exampleListContainer.innerHTML = '';
+
+        const maxPage = Math.ceil(this.exampleData.length / ITEMS_PER_PAGE) || 1;
+        if (this.examplePage > maxPage) this.examplePage = maxPage;
+
+        const startIdx = (this.examplePage - 1) * ITEMS_PER_PAGE;
+        const endIdx = startIdx + ITEMS_PER_PAGE;
+        const pageItems = this.exampleData.slice(startIdx, endIdx);
+
+        if (pageItems.length === 0) {
+            this.els.exampleListContainer.innerHTML = '<div style="padding:20px; color:#aaa; text-align:center;">저장된 예문이 없습니다.</div>';
+        } else {
+            pageItems.forEach((item, idx) => {
+                const globalIdx = startIdx + idx + 1;
+                const div = document.createElement('div');
+                div.className = 'example-item-row';
+                div.innerHTML = `
+                    <div class="example-content">
+                        <div class="example-index">No. ${globalIdx}</div>
+                        <div class="example-jp">${item.jp}</div>
+                        <div class="example-kr">${item.kr}</div>
+                    </div>
+                `;
+
+                const delBtn = document.createElement('button');
+                delBtn.className = 'btn-delete-small';
+                delBtn.textContent = '삭제';
+                delBtn.onclick = () => this.deleteExample(item.id);
+
+                div.appendChild(delBtn);
+                this.els.exampleListContainer.appendChild(div);
+            });
+        }
+
+        this.els.examplePageIndicator.textContent = `${this.examplePage} / ${maxPage}`;
     }
 }
 
